@@ -35,6 +35,7 @@
 #include "common/system.h"
 #include "common/winexe.h"
 #include "common/winexe_pe.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -62,29 +63,33 @@ class Dictionary;
 class FramesList;
 class Input;
 class Screen;
+class ScriptOpcodes;
 class ScriptResource;
-class ScriptMan;
 class Sequence;
 class SpecialCode;
 class TalkItems;
-class TriggerFunctions;
-class TriggerFunction;
+class ThreadList;
 
-typedef Common::Functor2<TriggerFunction*, uint32, void> TriggerFunctionCallback;
+enum {
+	kGameIdBBDOU   = 1,
+	kGameIdDuckman = 2
+};
+
+struct IllusionsGameDescription {
+	ADGameDescription desc;
+	int gameId;
+};
 
 class IllusionsEngine : public Engine {
-protected:
-	Common::Error run();
-	virtual bool hasFeature(EngineFeature f) const;
 public:
-	IllusionsEngine(OSystem *syst, const ADGameDescription *gd);
+	IllusionsEngine(OSystem *syst, const IllusionsGameDescription *gd);
 	~IllusionsEngine();
 	const Common::String getTargetName() { return _targetName; }
-	
 private:
-	const ADGameDescription *_gameDescription;
+	const IllusionsGameDescription *_gameDescription;
 	Graphics::PixelFormat _pixelFormat;
-public:	
+public:
+	
 	Common::RandomSource *_random;
 	Dictionary *_dict;
 	ResourceSystem *_resSys;
@@ -93,51 +98,71 @@ public:
 
 	Screen *_screen;
 	Input *_input;
-	ScriptMan *_scriptMan;
 	ActorItems *_actorItems;
 	BackgroundItems *_backgroundItems;
 	Camera *_camera;
 	Controls *_controls;
-	Cursor *_cursor;
 	TalkItems *_talkItems;
+	ScriptOpcodes *_scriptOpcodes;
 	SpecialCode *_specialCode;
-	TriggerFunctions *_triggerFunctions;
+	ThreadList *_threads;
+	
+	ScriptResource *_scriptResource;
 	
 	int _resGetCtr;
 	uint32 _resGetTime;
 	bool _unpauseControlActorFlag;
 	uint32 _lastUpdateTime;
 
+	uint32 _fontId;
+	int _field8;
+	uint32 _fieldA, _fieldE;
+
+	int16 _menuChoiceOfs;
+
+	int getGameId() const {
+		return _gameDescription->gameId;
+	}
+
 	Common::Point *getObjectActorPositionPtr(uint32 objectId);
-	
-	void notifyThreadId(uint32 &threadId);
-	
 	uint32 getElapsedUpdateTime();
 	int updateActors();
 	int updateSequences();
 	int updateGraphics();
 	int getRandom(int max);
-
-	// TODO Move to ScriptMan?
-	bool causeIsDeclared(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId);
-	void causeDeclare(uint32 verbId, uint32 objectId2, uint32 objectId, TriggerFunctionCallback *callback);
-	uint32 causeTrigger(uint32 sceneId, uint32 verbId, uint32 objectId2, uint32 objectId, uint32 callingThreadId);
-
 	int convertPanXCoord(int16 x);
-	Common::Point getNamedPointPosition(uint32 namedPointId);
-	uint32 getPriorityFromBase(int16 priority);
 	bool calcPointDirection(Common::Point &srcPt, Common::Point &dstPt, uint &facing);
-
 	void playVideo(uint32 videoId, uint32 objectId, uint32 value, uint32 threadId);
-	
 	bool isSoundActive();
 	bool cueVoice(byte *voiceName);
 	bool isVoiceCued();
 	void startVoice(int volume, int panX);
 	void stopVoice();
 	bool isVoicePlaying();
-	
-	uint32 getCurrentScene();	
+
+	void setCurrFontId(uint32 fontId);
+	bool checkActiveTalkThreads();
+	uint32 clipTextDuration(uint32 duration);
+
+	virtual void loadSpecialCode(uint32 resId) = 0;
+	virtual void unloadSpecialCode(uint32 resId) = 0;
+	virtual void notifyThreadId(uint32 &threadId) = 0;
+	virtual Control *getObjectControl(uint32 objectId) = 0;
+	virtual Common::Point getNamedPointPosition(uint32 namedPointId) = 0;
+	virtual uint32 getPriorityFromBase(int16 priority) = 0;
+	virtual uint32 getPrevScene() = 0;	
+	virtual uint32 getCurrentScene() = 0;
+
+	virtual bool isCursorObject(uint32 actorTypeId, uint32 objectId) = 0;
+	virtual void setCursorControlRoutine(Control *control) = 0;
+	virtual void placeCursorControl(Control *control, uint32 sequenceId) = 0;
+	virtual void setCursorControl(Control *control) = 0;
+	virtual void showCursor() = 0;
+	virtual void hideCursor() = 0;
+
+	virtual void startScriptThreadSimple(uint32 threadId, uint32 callingThreadId) = 0;
+	virtual uint32 startTempScriptThread(byte *scriptCodeIp, uint32 callingThreadId,
+		uint32 value8, uint32 valueC, uint32 value10) = 0;
 
 #if 0
 

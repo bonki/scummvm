@@ -74,11 +74,13 @@ void SequenceOpcodes::initOpcodes() {
 	OPCODE(17, opDisappearActor);
 	OPCODE(18, opAppearForeignActor);
 	OPCODE(19, opDisappearForeignActor);
+	OPCODE(21, opMoveDelta);
 	OPCODE(28, opNotifyThreadId1);
 	OPCODE(29, opSetPathCtrY);
 	OPCODE(33, opSetPathWalkPoints);
 	OPCODE(35, opSetScale);
 	OPCODE(36, opSetScaleLayer);
+	OPCODE(37, opDeactivatePathWalkRects);
 	OPCODE(38, opSetPathWalkRects);
 	OPCODE(39, opSetPriority);
 	OPCODE(40, opSetPriorityLayer);
@@ -98,11 +100,6 @@ void SequenceOpcodes::freeOpcodes() {
 }
 
 // Opcodes
-
-// Convenience macros
-#define	ARG_SKIP(x) opCall.skip(x); 
-#define ARG_INT16(name) int16 name = opCall.readSint16(); debug(1, "ARG_INT16(" #name " = %d)", name);
-#define ARG_UINT32(name) uint32 name = opCall.readUint32(); debug(1, "ARG_UINT32(" #name " = %08X)", name);
 
 void SequenceOpcodes::opYield(Control *control, OpCall &opCall) {
 	opCall._result = 2;
@@ -138,7 +135,7 @@ void SequenceOpcodes::opEndSequence(Control *control, OpCall &opCall) {
 		control->_actor->_frames = 0;
 		control->_actor->_frameIndex = 0;
 		control->_actor->_newFrameIndex = 0;
-		// TODO _vm->_resSys->unloadResourceById(control->_actor->_sequenceId);
+		_vm->_resSys->unloadResourceById(control->_actor->_sequenceId);
 	}
 	_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 	opCall._result = 1;
@@ -248,6 +245,14 @@ void SequenceOpcodes::opDisappearForeignActor(Control *control, OpCall &opCall) 
 	foreignControl->disappearActor();
 }
 
+void SequenceOpcodes::opMoveDelta(Control *control, OpCall &opCall) {
+	ARG_SKIP(2);
+	ARG_INT16(deltaX);
+	ARG_INT16(deltaY);
+	control->_actor->_position.x += deltaX;
+	control->_actor->_position.y += deltaY;
+}
+
 void SequenceOpcodes::opNotifyThreadId1(Control *control, OpCall &opCall) {
 	_vm->notifyThreadId(control->_actor->_notifyThreadId1);
 }
@@ -279,10 +284,14 @@ void SequenceOpcodes::opSetScaleLayer(Control *control, OpCall &opCall) {
 	control->setActorScale(scale);
 }
 
+void SequenceOpcodes::opDeactivatePathWalkRects(Control *control, OpCall &opCall) {
+	control->_actor->_flags &= ~0x0010;
+}
+
 void SequenceOpcodes::opSetPathWalkRects(Control *control, OpCall &opCall) {
 	ARG_INT16(pathWalkRectsIndex);
 	BackgroundResource *bgRes = _vm->_backgroundItems->getActiveBgResource();
-	control->_actor->_flags |= 0x10;
+	control->_actor->_flags |= 0x0010;
 	// TODO control->_actor->_pathWalkRects = bgRes->getPathWalkRects(pathWalkRectsIndex - 1);
 }
 
@@ -321,7 +330,7 @@ void SequenceOpcodes::opStopSound(Control *control, OpCall &opCall) {
 void SequenceOpcodes::opStartScriptThread(Control *control, OpCall &opCall) {
 	ARG_SKIP(2);
 	ARG_UINT32(threadId);
-	_vm->_scriptMan->startScriptThread(threadId, 0, 0, 0, 0);
+	_vm->startScriptThreadSimple(threadId, 0);
 }
 
 void SequenceOpcodes::opPlaceSubActor(Control *control, OpCall &opCall) {
