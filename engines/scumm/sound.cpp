@@ -45,6 +45,7 @@
 #include "audio/decoders/raw.h"
 #include "audio/decoders/voc.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/opus.h"
 
 namespace Scumm {
 
@@ -487,7 +488,7 @@ static int compareMP3OffsetTable(const void *a, const void *b) {
 void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle *handle) {
 	int num = 0, i;
 	int id = -1;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_OPUS) || defined(USE_MAD)
 	int size = 0;
 #endif
 	Common::ScopedPtr<ScummFile> file;
@@ -580,12 +581,12 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 				num = result->num_tags;
 			}
 			offset = result->new_offset;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_OPUS) || defined(USE_MAD)
 			size = result->compressed_size;
 #endif
 		} else {
 			offset += 8;
-#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_MAD)
+#if defined(USE_FLAC) || defined(USE_VORBIS) || defined(USE_OPUS) || defined(USE_MAD)
 			size = -1;
 #endif
 		}
@@ -638,6 +639,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			{
 			assert(size > 0);
 			input = Audio::makeVorbisStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), DisposeAfterUse::YES);
+			}
+#endif
+			break;
+		case kOpusMode:
+#ifdef USE_OPUS
+			{
+			assert(size > 0);
+			input = Audio::makeOpusStream(new Common::SeekableSubReadStream(file.release(), offset, offset + size, DisposeAfterUse::YES), DisposeAfterUse::YES);
 			}
 #endif
 			break;
@@ -922,6 +931,9 @@ void Sound::setupSfxFile() {
 #endif
 #ifdef USE_VORBIS
 		{ "sog", kVorbisMode },
+#endif
+#ifdef USE_OPUS
+		{ "sop", kOpusMode },
 #endif
 #ifdef USE_MAD
 		{ "so3", kMP3Mode },
