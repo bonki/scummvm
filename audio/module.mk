@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	decoders/raw.o \
 	decoders/voc.o \
 	decoders/vorbis.o \
+	decoders/opus.o \
 	decoders/wave.o \
 	decoders/xa.o \
 	mods/infogrames.o \

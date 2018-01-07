@@ -87,6 +87,10 @@ const char *gScummVMFeatures = ""
 #endif
 #endif
 
+#ifdef USE_VORBIS
+	"Opus "
+#endif
+
 #ifdef USE_FLAC
 	"FLAC "
 #endif

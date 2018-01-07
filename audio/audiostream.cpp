@@ -33,6 +33,7 @@
 #include "audio/decoders/quicktime.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/opus.h"
 #include "audio/mixer.h"
 
 
@@ -58,10 +59,13 @@ static const StreamFileFormat STREAM_FILEFORMATS[] = {
 #ifdef USE_VORBIS
 	{ "Ogg Vorbis",   ".ogg",  makeVorbisStream },
 #endif
+#ifdef USE_OPUS
+	{ "Ogg Opus",     ".opus", makeOpusStream },
+#endif
 #ifdef USE_MAD
 	{ "MPEG Layer 3", ".mp3",  makeMP3Stream },
 #endif
-	{ "MPEG-4 Audio",   ".m4a",  makeQuickTimeStream },
+	{ "MPEG-4 Audio", ".m4a",  makeQuickTimeStream },
 };
 
 SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &basename) {

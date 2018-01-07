@@ -47,6 +47,7 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "mad",       kSDLVersionAny, 0,              0,          0,                       0,                     "mad"        },
 		{ "vorbis",    kSDLVersionAny, 0,              0,          0,                       0,                     "vorbisfile vorbis ogg" },
 		{ "theora",    kSDLVersionAny, 0,              0,          0,                       0,                     "theoradec"  },
+		{ "opus",      kSDLVersionAny, 0,              0,          0,                       0,                     "opusfile opus ogg" },
 		{ "fluidsynth",kSDLVersionAny, 0,              0,          0,                       0,                     "fluidsynth" },
 		{ "faad",      kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
 		{ "libcurl",   kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
