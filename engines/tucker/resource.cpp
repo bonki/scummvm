@@ -27,6 +27,7 @@
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/opus.h"
 #include "audio/decoders/wave.h"
 
 #include "graphics/surface.h"
@@ -54,6 +55,9 @@ static const CompressedSoundFile compressedSoundFilesTable[] = {
 #endif
 #ifdef USE_VORBIS
 	{ "TUCKER.SOG", Audio::makeVorbisStream },
+#endif
+#ifdef USE_OPUS
+	{ "TUCKER.SOP", Audio::makeOpusStream },
 #endif
 #ifdef USE_MAD
 	{ "TUCKER.SO3", Audio::makeMP3Stream },

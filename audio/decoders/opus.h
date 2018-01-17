@@ -24,6 +24,7 @@
  * @file
  * Sound decoder used in engines:
  *  - scumm
+ *  - tucker
  */
 
 #ifndef AUDIO_OPUS_H
