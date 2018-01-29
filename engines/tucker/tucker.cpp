@@ -1597,11 +1597,18 @@ void TuckerEngine::updateSoundsTypes3_4() {
 }
 
 void TuckerEngine::drawData3() {
+	if (_console->_flags & fHideAnimations)
+		return;
+
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
 		if (_locationAnimationsTable[i]._drawFlag) {
 			int num = _locationAnimationsTable[i]._graphicNum;
 			const Data *d = &_dataTable[num];
 			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->_yDest * 640 + d->_xDest, _data3GfxBuf + d->_sourceOffset, d->_xSize, d->_ySize);
+
+			if (_console->_flags & fBoxAnimations)
+				Graphics::drawRectangle(_locationBackgroundGfxBuf, d->_xDest, d->_yDest, d->_xSize, d->_ySize, 100);
+
 			addDirtyRect(d->_xDest, d->_yDest, d->_xSize, d->_ySize);
 		}
 	}
@@ -1786,6 +1793,9 @@ void TuckerEngine::execData3PostUpdate() {
 }
 
 void TuckerEngine::drawBackgroundSprites() {
+	if (_console->_flags & fHideSprites)
+		return;
+
 	if (_backgroundSpriteDataPtr && _backgroundSpriteCurrentFrame != 0 && _backgroundSpriteCurrentFrame <= _backgroundSpriteLastFrame) {
 		int frameOffset = READ_LE_UINT24(_backgroundSpriteDataPtr + _backgroundSpriteCurrentFrame * 4);
 		int srcW = READ_LE_UINT16(_backgroundSpriteDataPtr + frameOffset);
@@ -1804,11 +1814,18 @@ void TuckerEngine::drawBackgroundSprites() {
 		}
 		srcX += _backgroundSprOffset;
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + srcY * 640 + srcX, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
+
+		if (_console->_flags & fBoxSprites)
+			Graphics::drawRectangle(_locationBackgroundGfxBuf, srcX, srcY, srcW, srcH, 75);
+
 		addDirtyRect(srcX, srcY, srcW, srcH);
 	}
 }
 
 void TuckerEngine::drawCurrentSprite() {
+	if (_console->_flags & fHideBud)
+		return;
+
 	// Workaround original game glitch: skip first bud frame drawing when entering location (tracker item #2597763)
 	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
 		return;
@@ -1847,6 +1864,10 @@ void TuckerEngine::drawCurrentSprite() {
 	}
 	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->_sourceOffset, chr->_xSize, chr->_ySize,
 		chr->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
+
+	if (_console->_flags & fBoxBud)
+		Graphics::drawRectangle(_locationBackgroundGfxBuf, xPos, yPos, chr->_xSize, chr->_ySize, 90);
+
 	addDirtyRect(xPos, yPos, chr->_xSize, chr->_ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
@@ -1859,6 +1880,10 @@ void TuckerEngine::drawCurrentSprite() {
 		}
 		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->_sourceOffset, chr2->_xSize, chr2->_ySize,
 			chr2->_yOffset, _locationHeightTable[_locationNum], _mirroredDrawing, whitelistReservedColors);
+
+		if (_console->_flags & fBoxBud)
+			Graphics::drawRectangle(_locationBackgroundGfxBuf, xPos, yPos, chr2->_xSize, chr2->_ySize, 90);
+
 		addDirtyRect(xPos, yPos, chr2->_xSize, chr2->_ySize);
 	}
 }
@@ -1878,6 +1903,9 @@ void TuckerEngine::setVolumeMusic(int index, int volume) {
 }
 
 void TuckerEngine::startSound(int offset, int index, int volume) {
+	if (_console->_flags & fMuteSound)
+		return;
+
 	bool loop = (_locationSoundsTable[index]._type == 2 || _locationSoundsTable[index]._type == 5 || _locationSoundsTable[index]._type == 7);
 	loadSound(Audio::Mixer::kSFXSoundType, _locationSoundsTable[index]._num, volume, loop, &_sfxHandles[index]);
 }
@@ -1891,6 +1919,9 @@ bool TuckerEngine::isSoundPlaying(int index) {
 }
 
 void TuckerEngine::startMusic(int offset, int index, int volume) {
+	if (_console->_flags & fMuteMusic)
+		return;
+
 	bool loop = (_locationMusicsTable[index]._flag == 2);
 	loadSound(Audio::Mixer::kMusicSoundType, _locationMusicsTable[index]._num, volume, loop, &_musicHandles[index]);
 }
@@ -1900,6 +1931,9 @@ void TuckerEngine::stopMusic(int index) {
 }
 
 void TuckerEngine::startSpeechSound(int num, int volume) {
+	if (_console->_flags & fMuteSpeech)
+		return;
+
 	loadSound(Audio::Mixer::kSpeechSoundType, num, volume, false, &_speechHandle);
 }
 
@@ -1981,6 +2015,9 @@ void TuckerEngine::redrawPanelItemsHelper() {
 }
 
 void TuckerEngine::drawSprite(int num) {
+	if (_console->_flags & fHideSprites)
+		return;
+
 	Sprite *s = &_spritesTable[num];
 	if (s->_animationFrame <= s->_firstFrame && s->_animationFrame > 0 && s->_state != -1) {
 		const uint8 *p = s->_animationData;
@@ -2011,8 +2048,13 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->_yMaxBackground, s->_flipX);
 			break;
 		}
+
 		const int xR = (srcX +  s->_gfxBackgroundOffset) % 640;
 		const int yR =  srcY + (s->_gfxBackgroundOffset  / 640);
+
+		if (_console->_flags & fBoxSprites)
+			Graphics::drawRectangle(_locationBackgroundGfxBuf, xR, yR, srcW, srcH, 20);
+
 		addDirtyRect(xR, yR, srcW, srcH);
 	}
 }
@@ -2935,6 +2977,10 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf, _scrollOffset + x, y, 640, numStr[i], 102, _charsetGfxBuf);
 		x += 8;
 	}
+
+	if (_console->_flags & fBoxText)
+		Graphics::drawRectangle(_locationBackgroundGfxBuf, _scrollOffset + xStart, y, Graphics::_charset._charW * 3, Graphics::_charset._charH);
+
 	addDirtyRect(_scrollOffset + xStart, y, Graphics::_charset._charW * 3, Graphics::_charset._charH);
 }
 
@@ -2947,6 +2993,10 @@ void TuckerEngine::drawStringAlt(int x, int y, int color, const uint8 *str, int 
 		x += _charWidthTable[chr];
 		++pos;
 	}
+
+	if (_console->_flags & fBoxText)
+		Graphics::drawRectangle(_locationBackgroundGfxBuf, xStart, y, x - xStart, Graphics::_charset._charH, 110);
+
 	addDirtyRect(xStart, y, x - xStart, Graphics::_charset._charH);
 }
 
@@ -3843,6 +3893,9 @@ void TuckerEngine::playSpeechForAction(int i) {
 }
 
 void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int num, int color) {
+	if (_console->_flags & fHideText)
+		return;
+
 	int x = (xStart - _scrollOffset) * 2;
 	int offset = (_scrollOffset + 320 - xStart) * 2;
 	if (_conversationOptionsCount > 0) {
@@ -3922,6 +3975,10 @@ void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, 
 		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}
+
+	if (_console->_flags & fBoxText)
+		Graphics::drawRectangle(_locationBackgroundGfxBuf, xStart, y, x - xStart + Graphics::_charset._charW, Graphics::_charset._charH, 130);
+
 	// At least in the English version of the game many glyphs in the character set are one pixel
 	// wider than specified in the character width table. This ensures that, when rendering text,
 	// characters are overlapping one pixel (i.e. their outlines overlap).
@@ -3969,15 +4026,6 @@ void TuckerEngine::redrawScreenRect(const Common::Rect &clip, const Common::Rect
 		if (w <= 0 || h <= 0) {
 			return;
 		}
-#if 0
-		static const uint8 outlineColor = 0;
-		memset(_locationBackgroundGfxBuf + r.top           * 640 + r.left, outlineColor, w);
-		memset(_locationBackgroundGfxBuf + (r.top + h - 1) * 640 + r.left, outlineColor, w);
-		for (int y = r.top; y < r.top + h; ++y) {
-			_locationBackgroundGfxBuf[y * 640 + r.left] = outlineColor;
-			_locationBackgroundGfxBuf[y * 640 + r.left + w - 1] = outlineColor;
-		}
-#endif
 		_system->copyRectToScreen(src, 640, r.left, r.top, w, h);
 	}
 }

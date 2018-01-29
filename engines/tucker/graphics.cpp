@@ -162,6 +162,21 @@ void Graphics::copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int 
 	}
 }
 
+void Graphics::drawRectangle(uint8 *dst, const int x1, const int y1, const int w, const int h, const int color) {
+	if (w <= 0 || h <= 0) {
+		return;
+	}
+
+	Common::Rect r(x1, y1, x1+w, y1+h);
+
+	memset(dst + r.top           * 640 + r.left, color, w);
+	memset(dst + (r.top + h - 1) * 640 + r.left, color, w);
+	for (int y = r.top; y < r.top + h; ++y) {
+		dst[y * 640 + r.left]         = color;
+		dst[y * 640 + r.left + w - 1] = color;
+	}
+}
+
 void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 chr, uint8 chrColor, const uint8 *src) {
 	if (chr < 32 || chr - 32 >= _charset._xCount * _charset._yCount) {
 		return;

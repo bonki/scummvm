@@ -23,6 +23,7 @@
 #ifndef TUCKER_GRAPHICS_H
 #define TUCKER_GRAPHICS_H
 
+#include "common/rect.h"
 #include "common/util.h"
 
 namespace Tucker {
@@ -55,6 +56,8 @@ public:
 	static void drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 chr, uint8 chrColor, const uint8 *src);
 
 	static void setCharset(CharsetType type);
+
+	static void drawRectangle(uint8 *dst, const int x1, const int y1, const int x2, const int y2, const int color = 0);
 
 	static Charset _charset;
 	static CharsetType _charsetType;

@@ -263,6 +263,7 @@ Common::String generateGameStateFileName(const char *target, int slot, bool pref
 class AnimationSequencePlayer;
 
 class TuckerEngine: public Engine {
+friend class TuckerConsole;
 public:
 
 	enum {
