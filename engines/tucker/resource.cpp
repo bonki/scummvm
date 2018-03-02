@@ -1066,7 +1066,6 @@ void TuckerEngine::loadActionsTable() {
 		setCursorState(kCursorStateNormal);
 		_csDataHandled = false;
 		_actionVerbLocked = false;
-		_mouseClick = 1;
 	}
 }
 

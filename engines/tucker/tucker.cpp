@@ -201,7 +201,6 @@ void TuckerEngine::resetVariables() {
 	_mousePosX = _mousePosY = 0;
 	_prevMousePosX = _prevMousePosY = 0;
 	_mouseButtonsMask = 0;
-	_mouseClick = 0;
 	_saveOrLoadGamePanel = 0;
 	_mouseIdleCounter = 0;
 	_leftMouseButtonPressed = _rightMouseButtonPressed = false;
@@ -1121,18 +1120,14 @@ void TuckerEngine::updateCursor() {
 		_actionObj2Num = _selectedObjectNum;
 		_actionObj2Type = _selectedObjectType;
 	}
-	if (!_leftMouseButtonPressed) {
-		_mouseClick = 0;
-	}
 	if (_mousePosY >= 150) {
 		if (_mouseWheelUp)
 			moveDownInventoryObjects();
 		else if (_mouseWheelDown)
 			moveUpInventoryObjects();
 	}
-	if (_leftMouseButtonPressed && _mouseClick == 0) {
+	if (_leftMouseButtonPressed) {
 		_fadedPanel = 0;
-		_mouseClick = 1;
 		clearItemsGfx();
 		drawInfoString();
 		if (_mousePosY >= 150 && _mousePosX < 212) {
@@ -1365,9 +1360,6 @@ void TuckerEngine::updateSfxData3_2() {
 void TuckerEngine::saveOrLoad() {
 	bool hasSavegame = existsSavegame();
 
-	if (!_leftMouseButtonPressed) {
-		_mouseClick = 0;
-	}
 	if (_currentSaveLoadGameState > 0) {
 		if (_saveOrLoadGamePanel == 0 && !hasSavegame) {
 			drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, _saveOrLoadGamePanel + 21, 102);
@@ -1390,8 +1382,7 @@ void TuckerEngine::saveOrLoad() {
 			return;
 		}
 	}
-	if (_leftMouseButtonPressed && _mouseClick == 0) {
-		_mouseClick = 1;
+	if (_leftMouseButtonPressed) {
 		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 154 && _mousePosY < 170) {
 			if (_currentSaveLoadGameState < 99) {
 				++_currentSaveLoadGameState;
@@ -1426,11 +1417,7 @@ void TuckerEngine::saveOrLoad() {
 }
 
 void TuckerEngine::handleMouseOnPanel() {
-	if (!_leftMouseButtonPressed) {
-		_mouseClick = 0;
-	}
-	if (_leftMouseButtonPressed && _mouseClick == 0) {
-		_mouseClick = 1;
+	if (_leftMouseButtonPressed) {
 		if (_mousePosY < 160 || _mousePosY > 176) {
 			return;
 		}

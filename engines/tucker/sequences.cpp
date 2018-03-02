@@ -416,7 +416,6 @@ void TuckerEngine::handleMapSequence() {
 		redrawScreen(_scrollOffset);
 		--_fadePaletteCounter;
 	}
-	_mouseClick = 1;
 	if (_nextLocationNum == 9 && _noPositionChangeAfterMap) {
 		_backgroundSpriteCurrentAnimation = 2;
 		_backgroundSpriteCurrentFrame = 0;
@@ -465,7 +464,6 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 		redrawScreen(_scrollOffset);
 		--_fadePaletteCounter;
 	}
-	_mouseClick = 1;
 	loadImage(filename, _quadBackgroundGfxBuf, 1);
 	_fadePaletteCounter = 0;
 	while (!_quitGame) {
@@ -477,9 +475,6 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 			fadeOutPalette();
 			++_fadePaletteCounter;
 		}
-		if (!_leftMouseButtonPressed && _mouseClick == 1) {
-			_mouseClick = 0;
-		}
 		if (_part == kPartThree && _selectedObjectNum == 45) {
 			for (int i = 0; i < 13; ++i) {
 				const int offset = _dataTable[204 + i]._yDest * 640 + _dataTable[204 + i]._xDest;
@@ -490,13 +485,12 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 			}
 		}
 		redrawScreen(_scrollOffset);
-		if (_leftMouseButtonPressed && _mouseClick != 1) {
+		if (_leftMouseButtonPressed) {
 			while (_fadePaletteCounter > 0) {
 				fadeInPalette();
 				redrawScreen(_scrollOffset);
 				--_fadePaletteCounter;
 			}
-			_mouseClick = 1;
 			break;
 		}
 	}

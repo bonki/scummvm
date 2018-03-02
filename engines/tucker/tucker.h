@@ -731,7 +731,6 @@ protected:
 	int _mousePosX, _mousePosY;
 	int _prevMousePosX, _prevMousePosY;
 	int _mouseButtonsMask;
-	int _mouseClick;
 	int _saveOrLoadGamePanel;
 	int _mouseIdleCounter;
 	bool _leftMouseButtonPressed;
