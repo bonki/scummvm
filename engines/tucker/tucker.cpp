@@ -208,7 +208,6 @@ void TuckerEngine::resetVariables() {
 	memset(_inputKeys, 0, sizeof(_inputKeys));
 	_cursorStyle = kCursorNormal;
 	_cursorState = kCursorStateNormal;
-	_updateCursorFlag = false;
 
 	_panelStyle = kPanelStyleIcons;
 	_panelState = kPanelStateNormal;
@@ -1062,18 +1061,13 @@ void TuckerEngine::updateCursor() {
 		return;
 	}
 	if (_rightMouseButtonPressed) {
-		if (!_updateCursorFlag) {
-			if (_actionVerb == kVerbLast) {
-				_actionVerb = kVerbFirst;
-			} else {
-				_actionVerb = (Verb)(_actionVerb + 1);
-			}
-			_updateCursorFlag = true;
-			_actionVerbLocked = true;
-			_actionRequiresTwoObjects = false;
+		if (_actionVerb == kVerbLast) {
+			_actionVerb = kVerbFirst;
+		} else {
+			_actionVerb = (Verb)(_actionVerb + 1);
 		}
-	} else {
-		_updateCursorFlag = false;
+		_actionVerbLocked = true;
+		_actionRequiresTwoObjects = false;
 	}
 	if (!_actionVerbLocked) {
 		setActionVerbUnderCursor();

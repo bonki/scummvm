@@ -741,7 +741,6 @@ protected:
 	bool _inputKeys[kInputKeyCount];
 	CursorStyle _cursorStyle;
 	CursorState _cursorState;
-	bool _updateCursorFlag;
 
 	PanelStyle _panelStyle;
 	PanelState _panelState;
