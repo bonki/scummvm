@@ -554,36 +554,12 @@ void TuckerEngine::mainLoop() {
 				}
 			}
 		}
-		if (_gamePaused && _charSpeechSoundCounter == 0) {
-			stopSounds();
-			while (1) {
-				waitForTimer(1);
-				if (_inputKeys[kInputKeyPause]) {
-					_inputKeys[kInputKeyPause] = false;
-					if (_charSpeechSoundCounter <= 0) {
-						break;
-					}
-				}
-				if (_charSpeechSoundCounter == 0) {
-					if (_lastKeyPressed >= Common::KEYCODE_1 && _lastKeyPressed <= Common::KEYCODE_5) {
-						if (_speechHistoryTable[_lastKeyPressed - Common::KEYCODE_1] > 0) {
-							startSpeechSound(_speechHistoryTable[_lastKeyPressed - Common::KEYCODE_1], 100);
-							_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-						}
-						_lastKeyPressed = 0;
-					}
-				}
-				updateCharSpeechSound(false);
-			}
-			playSounds();
-			_gamePaused = false;
+
+		while (_gamePaused) {
+			parseEvents();
+			waitForTimer(1);
 		}
-		if (_inputKeys[kInputKeyPause]) {
-			_inputKeys[kInputKeyPause] = false;
-			if (_locationNum != 70) {
-				_gamePaused = true;
-			}
-		}
+
 		if (_inputKeys[kInputKeyToggleTextSpeech]) {
 			_inputKeys[kInputKeyToggleTextSpeech] = false;
 			if ((_gameFlags & kGameFlagNoSubtitles) == 0) {
@@ -640,7 +616,7 @@ void TuckerEngine::parseEvents() {
 				}
 				break;
 			case Common::KEYCODE_p:
-				_inputKeys[kInputKeyPause] = true;
+				_inputKeys[kInputKeyTogglePause] = true;
 				break;
 			case Common::KEYCODE_F1:
 				_inputKeys[kInputKeyToggleInventory] = true;
@@ -697,6 +673,24 @@ void TuckerEngine::parseEvents() {
 			break;
 		}
 	}
+
+	if (_inputKeys[kInputKeyTogglePause]) {
+		if (!isSpeechSoundPlaying() && _locationNum != 70) {
+			switch (_gamePaused) {
+				case true:
+					playSounds();
+					_gamePaused = false;
+					break;
+				case false:
+					stopSounds();
+					_gamePaused = true;
+					break;
+			}
+		}
+
+		_inputKeys[kInputKeyTogglePause] = false;
+	}
+
 	if (_inputKeys[kInputKeySkipSpeech]) {
 		if (isSpeechSoundPlaying()) {
 			stopSpeechSound();

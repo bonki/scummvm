@@ -207,7 +207,7 @@ enum Verb {
 };
 
 enum InputKey {
-	kInputKeyPause = 0,
+	kInputKeyTogglePause = 0,
 	kInputKeyEscape,
 	kInputKeyToggleInventory,
 	kInputKeyToggleTextSpeech,
