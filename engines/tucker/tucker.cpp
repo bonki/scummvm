@@ -217,7 +217,6 @@ void TuckerEngine::resetVariables() {
 	memset(_panelObjectsOffsetTable, 0, sizeof(_panelObjectsOffsetTable));
 	_switchPanelCounter = 0;
 	_conversationOptionsCount = 0;
-	_fadedPanel = false;
 	_panelLockedFlag = false;
 	_conversationOptionLinesCount = 0;
 	memset(_inventoryItemsState, 0, sizeof(_inventoryItemsState));
@@ -477,12 +476,8 @@ void TuckerEngine::mainLoop() {
 			}
 			if (_panelType == kPanelTypeNormal) {
 				if (_panelLockedFlag || _pendingActionDelay > 0) {
-					if (!_fadedPanel) {
-						updateItemsGfxColors(0x60, 0x80);
-						_fadedPanel = true;
-					}
+					updateItemsGfxColors(0x60, 0x80);
 				} else {
-					_fadedPanel = false;
 					clearItemsGfx();
 					if (_gamePaused) {
 						drawPausedInfoBar();
@@ -1121,7 +1116,6 @@ void TuckerEngine::updateCursor() {
 			moveUpInventoryObjects();
 	}
 	if (_leftMouseButtonPressed) {
-		_fadedPanel = 0;
 		clearItemsGfx();
 		drawInfoString();
 		if (_mousePosY >= 150 && _mousePosX < 212) {

@@ -750,7 +750,6 @@ protected:
 	int _panelObjectsOffsetTable[50];
 	int _switchPanelCounter;
 	int _conversationOptionsCount;
-	bool _fadedPanel;
 	bool _panelLockedFlag;
 	int _conversationOptionLinesCount;
 	int _inventoryItemsState[50];
