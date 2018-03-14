@@ -872,7 +872,6 @@ void TuckerEngine::loadFx() {
 		_currentFxSet = 0;
 		for (int i = 0; i < _locationSoundsCount; ++i) {
 			LocationSound *s = &_locationSoundsTable[i];
-			s->_offset = 0;
 			s->_num = t.getNextInteger();
 			s->_volume = t.getNextInteger();
 			s->_type = t.getNextInteger();

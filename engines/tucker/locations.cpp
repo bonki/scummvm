@@ -34,7 +34,7 @@ void TuckerEngine::execData3PreUpdate_locationNum1() {
 	if (_flagsTable[1] == 1) {
 		_flagsTable[1] = 2;
 		_locationSoundsTable[3]._type = 2;
-		startSound(_locationSoundsTable[3]._offset, 3, _locationSoundsTable[3]._volume);
+		startSound(3);
 	}
 	_mapSequenceFlagsLocationTable[0] = (_flagsTable[1] > 0) ? 1 : 0;
 	if (_updateLocationCounter == 0) {
@@ -122,7 +122,7 @@ void TuckerEngine::execData3PostUpdate_locationNum1() {
 	if (_flagsTable[63] == 0) {
 		if (getRandomNumber() < 400) {
 			_flagsTable[63] = 1;
-			startSound(_locationSoundsTable[2]._offset, 2, _locationSoundsTable[2]._volume);
+			startSound(2);
 		}
 	}
 	_locationHeightTable[1] = (_yPosCurrent > 104) ? 60 : 0;
@@ -199,7 +199,7 @@ void TuckerEngine::execData3PreUpdate_locationNum2() {
 				if (_updateLocationYPosTable2[i] > _updateLocationYMaxTable[i]) {
 					_updateLocationYPosTable2[i] = 0;
 					const int num = (getRandomNumber() < 16000) ? 2 : 3;
-					startSound(_locationSoundsTable[num]._offset, num, _locationSoundsTable[num]._volume);
+					startSound(num);
 				}
 			} else if (getRandomNumber() > 32000) {
 				const int num = getRandomNumber() / 8192;
@@ -385,11 +385,11 @@ void TuckerEngine::updateSprite_locationNum5_0() {
 		_spritesTable[0]._counter = 0;
 		_spritesTable[0]._state = 1;
 		_locationSoundsTable[1]._type = 2;
-		startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+		startSound(1);
 	} else if (_spritesTable[0]._counter == 50) {
 		_locationSoundsTable[1]._type = 2;
 		_spritesTable[0]._state = 2;
-		startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+		startSound(1);
 	} else {
 		_spritesTable[0]._state = -1;
 		if (isSoundPlaying(1)) {
@@ -500,8 +500,8 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper1() {
 		if (_flagsTable[26] == 1) {
 			if (_flagsTable[27] < 15) {
 				if (_flagsTable[27] == 0) {
-					startSound(_locationSoundsTable[2]._offset, 2, _locationSoundsTable[2]._volume);
-					startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+					startSound(2);
+					startSound(1);
 				}
 				++_flagsTable[27];
 				setVolumeSound(0, _locationSoundsTable[0]._volume - _flagsTable[27] * 5);
@@ -510,7 +510,7 @@ void TuckerEngine::execData3PreUpdate_locationNum6Helper1() {
 		} else if (_flagsTable[26] == 3) {
 			if (_flagsTable[27] > 0) {
 				if (_flagsTable[27] == 15) {
-					startSound(_locationSoundsTable[2]._offset, 2, _locationSoundsTable[2]._volume);
+					startSound(2);
 				}
 				--_flagsTable[27];
 				setVolumeSound(0, _locationSoundsTable[0]._volume - _flagsTable[27] * 5);
@@ -662,7 +662,7 @@ void TuckerEngine::execData3PostUpdate_locationNum8() {
 		_updateLocationYPosTable2[0] += 2;
 		if (_updateLocationYPosTable2[0] > 120) {
 			_updateLocationYPosTable2[0] = 0;
-			startSound(_locationSoundsTable[2]._offset, 2, _locationSoundsTable[2]._volume);
+			startSound(2);
 		}
 	}
 	if (_flagsTable[28] > 1 && _flagsTable[28] < 5) {
@@ -720,11 +720,11 @@ void TuckerEngine::execData3PreUpdate_locationNum9() {
 	if (!isSoundPlaying(1) && getRandomNumber() > 32000) {
 		int i = getRandomNumber() / 5500 + 3;
 		assert(i >= 0 && i < kLocationSoundsTableSize);
-		startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
+		startSound(i);
 	}
 	if (_flagsTable[8] == 2 && _locationMaskType == 0) {
 		_flagsTable[8] = 0;
-		startSound(_locationSoundsTable[7]._offset, 7, _locationSoundsTable[7]._volume);
+		startSound(7);
 	}
 }
 
@@ -798,7 +798,7 @@ void TuckerEngine::execData3PreUpdate_locationNum10() {
 		_flagsTable[47] = 2;
 	}
 	if (_spritesTable[0]._state == 6 && _spritesTable[0]._animationFrame == 18 && !isSoundPlaying(0)) {
-		startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+		startSound(0);
 	}
 	if (_flagsTable[230] == 1 && getRandomNumber() > 32000) {
 		_flagsTable[230] = 0;
@@ -851,7 +851,7 @@ void TuckerEngine::updateSprite_locationNum11_3(int i) {
 void TuckerEngine::updateSprite_locationNum11_4(int i) {
 	if (getRandomNumber() > 30000 && _flagsTable[55] < 2) {
 		_spritesTable[i]._state = 1;
-		startSound(_locationSoundsTable[6]._offset, 6, _locationSoundsTable[6]._volume);
+		startSound(6);
 	} else {
 		_spritesTable[i]._state = -1;
 	}
@@ -940,7 +940,7 @@ void TuckerEngine::execData3PreUpdate_locationNum13() {
 	if (_flagsTable[69] == 0) {
 		if (getRandomNumber() > 31000) {
 			_flagsTable[69] = 1;
-			startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+			startSound(1);
 		} else if (isSoundPlaying(1)) {
 			stopSound(1);
 		}
@@ -949,7 +949,7 @@ void TuckerEngine::execData3PreUpdate_locationNum13() {
 	if (_spritesTable[0]._state == 1) {
 		if (_spritesTable[0]._animationFrame > 10 && _spritesTable[0]._animationFrame < 20) {
 			if (!isSoundPlaying(0)) {
-				startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+				startSound(0);
 			}
 		}
 	}
@@ -991,7 +991,7 @@ void TuckerEngine::execData3Update_locationNum14() {
 			num = 7;
 		}
 		if (num != -1) {
-			startSound(_locationSoundsTable[num]._offset, num, _locationSoundsTable[num]._volume);
+			startSound(num);
 		}
 	}
 	_locationHeightTable[14] = (_xPosCurrent < 100) ? 0 : 60;
@@ -1109,7 +1109,7 @@ void TuckerEngine::execData3PreUpdate_locationNum15() {
 	if (_updateLocationFadePaletteCounter > 500) {
 		if (!isSoundPlaying(1) && getRandomNumber() > 31000) {
 			const int i = getRandomNumber() / 4714;
-			startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
+			startSound(i);
 			_updateLocationFadePaletteCounter = 0;
 		}
 	}
@@ -1168,13 +1168,13 @@ void TuckerEngine::updateSprite_locationNum16_1(int i) {
 		state = 10;
 		if (isSoundPlaying(1)) {
 			_locationSoundsTable[1]._type = 2;
-			startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+			startSound(1);
 		}
 	} else {
 		state = 9;
 		if (isSoundPlaying(0)) {
 			_locationSoundsTable[0]._type = 2;
-			startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+			startSound(0);
 		}
 	}
 	_spritesTable[i]._state = state;
@@ -1186,7 +1186,7 @@ void TuckerEngine::updateSprite_locationNum16_2(int i) {
 	if (_flagsTable[78] == 0) {
 		if (_flagsTable[60] == 1 && _flagsTable[61] == 1) {
 			_flagsTable[78] = 1;
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
+			startSound(5);
 			state = 7;
 		}
 	} else if (_flagsTable[78] == 1) {
@@ -1367,7 +1367,7 @@ void TuckerEngine::execData3PreUpdate_locationNum21() {
 			} else {
 				num = 5;
 			}
-			startSound(_locationSoundsTable[num]._offset, num, _locationSoundsTable[num]._volume);
+			startSound(num);
 		}
 	}
 	if (_spritesTable[0]._state == 6) {
@@ -1648,8 +1648,8 @@ void TuckerEngine::execData3PreUpdate_locationNum26() {
 	_spritesTable[0]._gfxBackgroundOffset = _flagsTable[125];
 	if (_flagsTable[125] > 0 && _flagsTable[125] < 300) {
 		if (!isSoundPlaying(5)) {
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
-			startSound(_locationSoundsTable[6]._offset, 6, _locationSoundsTable[6]._volume);
+			startSound(5);
+			startSound(6);
 		}
 		++_flagsTable[125];
 		_flagsTable[126] = 1;
@@ -1819,7 +1819,7 @@ void TuckerEngine::updateSprite_locationNum30_34(int i) {
 
 void TuckerEngine::execData3PreUpdate_locationNum30() {
 	if (!isSoundPlaying(1) && getRandomNumber() > 32500) {
-		startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+		startSound(1);
 	}
 }
 
@@ -1935,23 +1935,23 @@ void TuckerEngine::execData3PreUpdate_locationNum33() {
 	if (_xPosCurrent < 90) {
 		if (_flagsTable[105] == 0) {
 			_flagsTable[105] = 3;
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
+			startSound(5);
 		}
 	} else {
 		if (_flagsTable[105] == 1) {
 			_flagsTable[105] = 2;
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
+			startSound(5);
 		}
 	}
 	if (_xPosCurrent > 230) {
 		if (_flagsTable[106] == 0) {
 			_flagsTable[106] = 3;
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
+			startSound(5);
 		}
 	} else {
 		if (_flagsTable[106] == 1) {
 			_flagsTable[106] = 2;
-			startSound(_locationSoundsTable[5]._offset, 5, _locationSoundsTable[5]._volume);
+			startSound(5);
 		}
 	}
 }
@@ -2030,7 +2030,7 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 		if (!_changeBackgroundSprite) {
 			if (_backgroundSpriteCurrentFrame == 16 && !isSoundPlaying(4)) {
 				_locationSoundsTable[4]._type = 2;
-				startSound(_locationSoundsTable[4]._offset, 4, _locationSoundsTable[4]._volume);
+				startSound(4);
 			} else {
 				if (_backgroundSpriteCurrentFrame == 28) {
 					stopSound(4);
@@ -2039,7 +2039,7 @@ void TuckerEngine::execData3PreUpdate_locationNum41() {
 		} else {
 			if (_backgroundSpriteCurrentFrame == 28 && !isSoundPlaying(4)) {
 				_locationSoundsTable[4]._type = 2;
-				startSound(_locationSoundsTable[4]._offset, 4, _locationSoundsTable[4]._volume);
+				startSound(4);
 			} else {
 				if (_backgroundSpriteCurrentFrame == 18) {
 					stopSound(4);
@@ -2166,7 +2166,7 @@ void TuckerEngine::execData3PreUpdate_locationNum44() {
 	if (_backgroundSpriteCurrentAnimation == 1) {
 		if (!isSoundPlaying(3) && _backgroundSpriteCurrentFrame == 1) {
 			_locationSoundsTable[3]._type = 2;
-			startSound(_locationSoundsTable[3]._offset, 3, _locationSoundsTable[3]._volume);
+			startSound(3);
 		}
 		if (_backgroundSpriteCurrentFrame == 21) {
 			_flagsTable[77] = 1;
@@ -2176,7 +2176,7 @@ void TuckerEngine::execData3PreUpdate_locationNum44() {
 		}
 	} else if (_backgroundSpriteCurrentAnimation == 4) {
 		if (_backgroundSpriteCurrentFrame == 20 && !isSoundPlaying(3)) {
-			startSound(_locationSoundsTable[3]._offset, 3, _locationSoundsTable[3]._volume);
+			startSound(3);
 		}
 	}
 }
@@ -2769,7 +2769,7 @@ void TuckerEngine::execData3PreUpdate_locationNum63() {
 		if (_flagsTable[132] == 0 || (_flagsTable[132] == 2 && _flagsTable[136] > 0)) {
 			if (!isSoundPlaying(1)) {
 				_locationSoundsTable[1]._type = 2;
-				startSound(_locationSoundsTable[1]._offset, 1, _locationSoundsTable[1]._volume);
+				startSound(1);
 			}
 		} else {
 			if (isSoundPlaying(1)) {
@@ -2779,7 +2779,7 @@ void TuckerEngine::execData3PreUpdate_locationNum63() {
 		if (_flagsTable[132] == 1) {
 			if (!isSoundPlaying(0)) {
 				_locationSoundsTable[0]._type = 2;
-				startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+				startSound(0);
 			}
 		} else {
 			if (isSoundPlaying(0)) {
@@ -2788,7 +2788,7 @@ void TuckerEngine::execData3PreUpdate_locationNum63() {
 		}
 		if (_flagsTable[132] == 2 && _flagsTable[136] == 0) {
 			if (!isSoundPlaying(2)) {
-				startSound(_locationSoundsTable[2]._offset, 2, _locationSoundsTable[2]._volume);
+				startSound(2);
 			}
 		} else {
 			if (isSoundPlaying(2)) {
@@ -3015,7 +3015,7 @@ void TuckerEngine::updateSprite_locationNum69_3(int i) {
 void TuckerEngine::execData3PreUpdate_locationNum70() {
 	const uint8 color = 103;
 	if (_execData3Counter == 0) {
-		startSound(_locationSoundsTable[6]._offset, 6, _locationSoundsTable[6]._volume);
+		startSound(6);
 		_execData3Counter = 1;
 		_flagsTable[143] = 0;
 		_updateLocation70StringLen = 0;
@@ -3045,7 +3045,7 @@ void TuckerEngine::execData3PreUpdate_locationNum70Helper() {
 		if (_lastKeyPressed == Common::KEYCODE_BACKSPACE || _lastKeyPressed == Common::KEYCODE_DELETE) {
 			if (_updateLocation70StringLen > 0) {
 				--_updateLocation70StringLen;
-				startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+				startSound(0);
 			}
 		} else if (_lastKeyPressed == Common::KEYCODE_RETURN) {
 			_flagsTable[143] = 1;
@@ -3056,7 +3056,7 @@ void TuckerEngine::execData3PreUpdate_locationNum70Helper() {
 				_flagsTable[143] = 2;
 			}
 			const int num = (_flagsTable[143] == 1) ? 4 : 5;
-			startSound(_locationSoundsTable[num]._offset, num, _locationSoundsTable[num]._volume);
+			startSound(num);
 		} else if (_updateLocation70StringLen < 19) {
 			uint8 chr = 0;
 			switch (_lastKeyPressed) {
@@ -3093,7 +3093,7 @@ void TuckerEngine::execData3PreUpdate_locationNum70Helper() {
 				}
 				break;
 			}
-			startSound(_locationSoundsTable[0]._offset, 0, _locationSoundsTable[0]._volume);
+			startSound(0);
 			if (chr > 0) {
 				_updateLocation70String[_updateLocation70StringLen] = chr;
 				++_updateLocation70StringLen;

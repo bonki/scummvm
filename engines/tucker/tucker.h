@@ -226,7 +226,6 @@ struct LocationSound {
 	int _updateType;
 	int _stopFxSpriteState;
 	int _stopFxSpriteNum;
-	int _offset;
 	int _type;
 	int _volume;
 	int _flagValueStartFx;
@@ -384,11 +383,12 @@ protected:
 	void drawCurrentSprite();
 	void setVolumeSound(int index, int volume);
 	void setVolumeMusic(int index, int volume);
-	void startSound(int offset, int index, int volume);
-	void stopSound(int index);
-	bool isSoundPlaying(int index);
-	void startMusic(int offset, int index, int volume);
-	void stopMusic(int index);
+	void startSound(int soundIndex);
+	void startSound(int soundIndex, int handleIndex);
+	void stopSound(int handleIndex);
+	bool isSoundPlaying(int handleIndex);
+	void startMusic(int musicIndex);
+	void stopMusic(int musicIndex);
 	void startSpeechSound(int num, int volume);
 	void stopSpeechSound();
 	bool isSpeechSoundPlaying();

@@ -556,8 +556,7 @@ void TuckerEngine::mainLoop() {
 			if (_miscSoundFxDelayCounter[num] > 0) {
 				--_miscSoundFxDelayCounter[num];
 				if (_miscSoundFxDelayCounter[num] == 0) {
-					const int index = _miscSoundFxNum[num];
-					startSound(_locationSoundsTable[index]._offset, index, _locationSoundsTable[index]._volume);
+					startSound(_miscSoundFxNum[num]);
 				}
 			}
 		}
@@ -1170,12 +1169,12 @@ void TuckerEngine::playSounds() {
 	for (int i = 0; i < _locationSoundsCount; ++i) {
 		if (_locationSoundsTable[i]._type == 1 || _locationSoundsTable[i]._type == 2 || _locationSoundsTable[i]._type == 5 ||
 			(_locationSoundsTable[i]._type == 7 && _flagsTable[_locationSoundsTable[i]._flagNum] == _locationSoundsTable[i]._flagValueStartFx)) {
-			startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
+			startSound(i);
 		}
 	}
 	for (int i = 0; i < _locationMusicsCount; ++i) {
 		if (_locationMusicsTable[i]._flag > 0) {
-			startMusic(_locationMusicsTable[i]._offset, i, _locationMusicsTable[i]._volume);
+			startMusic(i);
 		}
 	}
 }
@@ -1324,7 +1323,7 @@ void TuckerEngine::updateSfxData3_1() {
 					if (s->_type == 7) {
 						_flagsTable[s->_flagNum] = s->_flagValueStartFx;
 					}
-					startSound(s->_offset, i, s->_volume);
+					startSound(i);
 				} else if (s->_type == 7) {
 					if (_spritesTable[j]._animationFrame == s->_stopFxSpriteNum && _spritesTable[j]._state == s->_stopFxSpriteState) {
 						_flagsTable[s->_flagNum] = s->_flagValueStopFx;
@@ -1344,7 +1343,7 @@ void TuckerEngine::updateSfxData3_2() {
 				if (s->_type == 7) {
 					_flagsTable[s->_flagNum] = s->_flagValueStartFx;
 				}
-				startSound(s->_offset, i, s->_volume);
+				startSound(i);
 			} else if (s->_type == 7) {
 				if (s->_stopFxSpriteNum == _backgroundSpriteCurrentFrame && s->_stopFxSpriteState == _backgroundSpriteCurrentAnimation) {
 					_flagsTable[s->_flagNum] = s->_flagValueStopFx;
@@ -1585,7 +1584,7 @@ void TuckerEngine::startCharacterSounds() {
 	if (_characterSoundFxDelayCounter != 0) {
 		--_characterSoundFxDelayCounter;
 		if (_characterSoundFxDelayCounter <= 0) {
-			startSound(_locationSoundsTable[_characterSoundFxNum]._offset, _characterSoundFxNum, _locationSoundsTable[_characterSoundFxNum]._volume);
+			startSound(_characterSoundFxNum);
 		}
 	}
 }
@@ -1598,13 +1597,13 @@ void TuckerEngine::updateSoundsTypes3_4() {
 		switch (_locationSoundsTable[i]._type) {
 		case 3:
 			if (getRandomNumber() >= 32300) {
-				startSound(_locationSoundsTable[i]._offset, 0, _locationSoundsTable[i]._volume);
+				startSound(i, 0);
 				return;
 			}
 			break;
 		case 4:
 			if (getRandomNumber() >= 32763) {
-				startSound(_locationSoundsTable[i]._offset, 0, _locationSoundsTable[i]._volume);
+				startSound(i, 0);
 				return;
 			}
 			break;
@@ -1893,26 +1892,32 @@ void TuckerEngine::setVolumeMusic(int index, int volume) {
 	_mixer->setChannelVolume(_musicHandles[index], volume * Audio::Mixer::kMaxChannelVolume / kMaxSoundVolume);
 }
 
-void TuckerEngine::startSound(int offset, int index, int volume) {
-	bool loop = (_locationSoundsTable[index]._type == 2 || _locationSoundsTable[index]._type == 5 || _locationSoundsTable[index]._type == 7);
-	loadSound(Audio::Mixer::kSFXSoundType, _locationSoundsTable[index]._num, volume, loop, &_sfxHandles[index]);
+void TuckerEngine::startSound(int soundIndex) {
+	startSound(soundIndex, soundIndex);
 }
 
-void TuckerEngine::stopSound(int index) {
-	_mixer->stopHandle(_sfxHandles[index]);
+void TuckerEngine::startSound(int soundIndex, int handleIndex) {
+	LocationSound *sound = &_locationSoundsTable[soundIndex];
+	bool loop = (sound->_type == 2 || sound->_type == 5 || sound->_type == 7);
+	loadSound(Audio::Mixer::kSFXSoundType, sound->_num, sound->_volume, loop, &_sfxHandles[handleIndex]);
 }
 
-bool TuckerEngine::isSoundPlaying(int index) {
-	return _mixer->isSoundHandleActive(_sfxHandles[index]);
+void TuckerEngine::stopSound(int handleIndex) {
+	_mixer->stopHandle(_sfxHandles[handleIndex]);
 }
 
-void TuckerEngine::startMusic(int offset, int index, int volume) {
-	bool loop = (_locationMusicsTable[index]._flag == 2);
-	loadSound(Audio::Mixer::kMusicSoundType, _locationMusicsTable[index]._num, volume, loop, &_musicHandles[index]);
+bool TuckerEngine::isSoundPlaying(int handleIndex) {
+	return _mixer->isSoundHandleActive(_sfxHandles[handleIndex]);
 }
 
-void TuckerEngine::stopMusic(int index) {
-	_mixer->stopHandle(_musicHandles[index]);
+void TuckerEngine::startMusic(int musicIndex) {
+	LocationMusic *music = &_locationMusicsTable[musicIndex];
+	bool loop = (music->_flag == 2);
+	loadSound(Audio::Mixer::kMusicSoundType, music->_num, music->_volume, loop, &_musicHandles[musicIndex]);
+}
+
+void TuckerEngine::stopMusic(int musicIndex) {
+	_mixer->stopHandle(_musicHandles[musicIndex]);
 }
 
 void TuckerEngine::startSpeechSound(int num, int volume) {
@@ -3338,7 +3343,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_flx:
 		i = readTableInstructionParam(2);
 		_locationSoundsTable[i]._type = 2;
-		startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
+		startSound(i);
 		return 0;
 	case kCode_fxx:
 		i = readTableInstructionParam(2);
@@ -3348,7 +3353,7 @@ int TuckerEngine::executeTableInstruction() {
 		return 0;
 	case kCode_fx:
 		i = readTableInstructionParam(2);
-		startSound(_locationSoundsTable[i]._offset, i, _locationSoundsTable[i]._volume);
+		startSound(i);
 		_soundInstructionIndex = i;
 		return 0;
 	case kCode_gfg:
