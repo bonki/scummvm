@@ -251,9 +251,9 @@ void TuckerEngine::resetVariables() {
 	_actionVerbLocked = false;
 	_nextAction = 0;
 	_selectedObjectNum = 0;
-	_selectedObjectType = 0;
+	_selectedObjectType = kObjectTypeNone;
 	_selectedCharacterNum = 0;
-	_actionObj1Type = _actionObj2Type = 0;
+	_actionObj1Type = _actionObj2Type = kObjectTypeNone;
 	_actionObj1Num = _actionObj2Num = 0;
 	_actionRequiresTwoObjects = false;
 	_actionPosX = 0;
@@ -263,7 +263,7 @@ void TuckerEngine::resetVariables() {
 	_selectedCharacterDirection = 0;
 	_selectedCharacter2Num = 0;
 	_currentActionObj1Num = _currentActionObj2Num = 0;
-	_currentInfoString1SourceType = _currentInfoString2SourceType = 0;
+	_currentInfoString1SourceType = _currentInfoString2SourceType = kObjectTypeNone;
 	memset(_speechActionCounterTable, 0, sizeof(_speechActionCounterTable));
 	_actionCharacterNum = 0;
 
@@ -870,7 +870,7 @@ void TuckerEngine::updateCharPosition() {
 		_actionTextColor = 1;
 		_actionCharacterNum = 99;
 		switch (_currentInfoString1SourceType) {
-		case 0:
+		case kObjectTypeNone:
 			if (_currentActionObj1Num == 0) {
 				return;
 			}
@@ -910,7 +910,7 @@ void TuckerEngine::updateCharPosition() {
 			_speechSoundNum += 1865;
 			updateCharPositionHelper();
 			return;
-		case 1:
+		case kObjectTypeAnimatedObject:
 			if (_locationAnimationsTable[_selectedCharacter2Num]._getFlag == 1) {
 				_speechSoundNum = _speechSoundBaseNum + _locationAnimationsTable[_selectedCharacter2Num]._inventoryNum;
 				_characterSpeechDataPtr = _ptTextBuf;
@@ -922,13 +922,15 @@ void TuckerEngine::updateCharPosition() {
 				return;
 			}
 			break;
-		case 2:
+		case kObjectTypeCharacter:
 			_characterSpeechDataPtr = _ptTextBuf;
 			_speechSoundNum = 2175 + _charPosTable[_selectedCharacterNum]._description;
 			if (_charPosTable[_selectedCharacterNum]._description != 0) {
 				updateCharPositionHelper();
 				return;
 			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -1093,12 +1095,12 @@ void TuckerEngine::updateCursor() {
 		}
 	}
 	_selectedObjectNum = 0;
-	_selectedObjectType = 0;
+	_selectedObjectType = kObjectTypeNone;
 	int num = setCharacterUnderCursor();
-	if (_selectedObjectType == 0) {
+	if (_selectedObjectType == kObjectTypeNone) {
 		num = setLocationAnimationUnderCursor();
 	}
-	if (_selectedObjectType > 0) {
+	if (_selectedObjectType != kObjectTypeNone) {
 		_selectedObjectNum = num;
 	} else {
 		num = getObjectUnderCursor();
@@ -1107,28 +1109,28 @@ void TuckerEngine::updateCursor() {
 		}
 	}
 	handleMouseClickOnInventoryObject();
-	if (_actionVerb == kVerbTalk && _selectedObjectType != 2) {
-		_selectedObjectNum = 0;
-		_selectedObjectType = 0;
-	} else if (_actionVerb == kVerbGive && _selectedObjectType != 3 && !_actionRequiresTwoObjects) {
-		_selectedObjectNum = 0;
-		_selectedObjectType = 0;
+	if (_actionVerb == kVerbTalk && _selectedObjectType != kObjectTypeCharacter) {
+		_selectedObjectNum  = 0;
+		_selectedObjectType = kObjectTypeNone;
+	} else if (_actionVerb == kVerbGive && _selectedObjectType != kObjectTypeInventoryObject && !_actionRequiresTwoObjects) {
+		_selectedObjectNum  = 0;
+		_selectedObjectType = kObjectTypeNone;
 	}
-	if (!_actionVerbLocked && _selectedObjectType == 2 && _selectedObjectNum != 21) {
+	if (!_actionVerbLocked && _selectedObjectType == kObjectTypeCharacter && _selectedObjectNum != 21) {
 		_actionVerb = kVerbTalk;
 	}
 	if (!_actionRequiresTwoObjects) {
-		_actionObj1Num = _selectedObjectNum;
+		_actionObj1Num  = _selectedObjectNum;
 		_actionObj1Type = _selectedObjectType;
-		_actionObj2Num = 0;
-		_actionObj2Type = 0;
+		_actionObj2Num  = 0;
+		_actionObj2Type = kObjectTypeNone;
 	} else if (_actionObj1Num == _selectedObjectNum && _actionObj1Type == _selectedObjectType) {
-		_selectedObjectNum = 0;
-		_selectedObjectType = 0;
-		_actionObj2Num = 0;
-		_actionObj2Type = 0;
+		_selectedObjectNum  = 0;
+		_selectedObjectType = kObjectTypeNone;
+		_actionObj2Num      = 0;
+		_actionObj2Type     = kObjectTypeNone;
 	} else {
-		_actionObj2Num = _selectedObjectNum;
+		_actionObj2Num  = _selectedObjectNum;
 		_actionObj2Type = _selectedObjectType;
 	}
 	if (!_leftMouseButtonPressed) {
@@ -1156,7 +1158,7 @@ void TuckerEngine::updateCursor() {
 				moveUpInventoryObjects();
 			}
 		} else {
-			if (_selectedObjectType == 3) {
+			if (_selectedObjectType == kObjectTypeInventoryObject) {
 				setActionForInventoryObject();
 			} else if (_actionVerb != kVerbWalk) {
 				_actionVerbLocked = false;
@@ -2089,7 +2091,7 @@ void TuckerEngine::drawInfoString() {
 	int infoStringWidth = 0;
 	int object1NameWidth = 0;
 	int verbWidth = getStringWidth(_actionVerb + 1, _infoBarBuf);
-	if (_actionObj1Num > 0 || _actionObj1Type > 0) {
+	if (_actionObj1Num > 0 || _actionObj1Type != kObjectTypeNone) {
 		object1NameWidth = getStringWidth(_actionObj1Num + 1, obj1StrBuf) + 4;
 		infoStringWidth = verbWidth + object1NameWidth;
 	} else {
@@ -2113,7 +2115,7 @@ void TuckerEngine::drawInfoString() {
 	const int xPos = (kScreenWidth / 2) - 1 - (infoStringWidth / 2);
 	if (_gameLang == Common::EN_ANY || (_actionObj2Num == 0 && _actionObj2Type == 0) || verbPreposition == kVerbPrepositionNone) {
 		drawItemString(xPos, _actionVerb + 1, _infoBarBuf);
-		if (_actionObj1Num > 0 || _actionObj1Type > 0) {
+		if (_actionObj1Num > 0 || _actionObj1Type != kObjectTypeNone) {
 			drawItemString(xPos + 4 + verbWidth, _actionObj1Num + 1, obj1StrBuf);
 		}
 	}
@@ -3362,7 +3364,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_fw:
 		_selectedCharacterNum = readTableInstructionParam(2);
 		_actionVerb = kVerbWalk;
-		_selectedObjectType = 0;
+		_selectedObjectType = kObjectTypeNone;
 		_selectedObjectNum = 1;
 		setSelectedObjectKey();
 		return 0;
@@ -3575,7 +3577,7 @@ int TuckerEngine::getObjectUnderCursor() {
 		if (_mousePosY >= _locationObjectsTable[i]._yPos + _locationObjectsTable[i]._ySize) {
 			continue;
 		}
-		_selectedObjectType = 0;
+		_selectedObjectType = kObjectTypeNone;
 		_selectedCharacterNum = i;
 		setCursorStyle(_locationObjectsTable[i]._cursorStyle);
 		return i;
@@ -3594,7 +3596,7 @@ void TuckerEngine::setSelectedObjectKey() {
 	_selectedObject._yPos = 0;
 	_selectedObject._locationObjectLocation = kLocationNone;
 	_pendingActionIndex = 0;
-	if (_selectedObjectType == 0) {
+	if (_selectedObjectType == kObjectTypeNone) {
 		if (_selectedObjectNum == 0) {
 			_selectedObject._xPos = x;
 			_selectedObject._yPos = _mousePosY;
@@ -3613,17 +3615,19 @@ void TuckerEngine::setSelectedObjectKey() {
 		}
 	} else {
 		switch (_selectedObjectType) {
-		case 1:
+		case kObjectTypeAnimatedObject:
 			_selectedObject._xPos = _locationAnimationsTable[_selectedCharacterNum]._standX;
 			_selectedObject._yPos = _locationAnimationsTable[_selectedCharacterNum]._standY;
 			break;
-		case 2:
+		case kObjectTypeCharacter:
 			_selectedObject._xPos = _charPosTable[_selectedCharacterNum]._xWalkTo;
 			_selectedObject._yPos = _charPosTable[_selectedCharacterNum]._yWalkTo;
 			break;
-		case 3:
+		case kObjectTypeInventoryObject:
 			_selectedObject._xPos = _xPosCurrent;
 			_selectedObject._yPos = _yPosCurrent;
+			break;
+		default:
 			break;
 		}
 	}
@@ -3724,11 +3728,11 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 		return;
 	}
 	_selectedObjectNum = _inventoryObjectsList[obj];
-	_selectedObjectType = 3;
+	_selectedObjectType = kObjectTypeInventoryObject;
 	switch (_selectedObjectNum) {
 	case 30:
 		if (_leftMouseButtonPressed) {
-			_selectedObjectType = 0;
+			_selectedObjectType = kObjectTypeNone;
 			_selectedObjectNum = 0;
 			_actionVerb = kVerbWalk;
 			_actionVerbLocked = false;
@@ -3754,7 +3758,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_characterSpeechDataPtr = _ptTextBuf + getPositionForLine(_speechSoundNum, _ptTextBuf);
 				_speechSoundNum = 0;
 				_actionVerb = kVerbWalk;
-				_selectedObjectType = 0;
+				_selectedObjectType = kObjectTypeNone;
 				_selectedObjectNum = 0;
 				_actionVerbLocked = false;
 			}
@@ -3781,7 +3785,7 @@ int TuckerEngine::setCharacterUnderCursor() {
 			continue;
 		}
 		if (_charPosTable[i]._flagNum == 0 || _flagsTable[_charPosTable[i]._flagNum] == _charPosTable[i]._flagValue) {
-			_selectedObjectType = 2;
+			_selectedObjectType = kObjectTypeCharacter;
 			_selectedCharacterDirection = _charPosTable[i]._direction;
 			_selectedCharacterNum = i;
 			return _charPosTable[i]._name;
@@ -3819,7 +3823,7 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 			// could be entered without having done the cellar door puzzle first.
 			continue;
 		}
-		_selectedObjectType = 1;
+		_selectedObjectType = kObjectTypeAnimatedObject;
 		_selectedCharacterNum = i;
 		_selectedCharacter2Num = i;
 		return _locationAnimationsTable[i]._selectable;
@@ -3846,7 +3850,7 @@ void TuckerEngine::setActionForInventoryObject() {
 	_currentInfoString1SourceType = _actionObj1Type;
 	_currentActionObj2Num = _actionObj2Num;
 	_currentInfoString2SourceType = _actionObj2Type;
-	if (_actionVerb == kVerbLook && _selectedObjectType == 3) {
+	if (_actionVerb == kVerbLook && _selectedObjectType == kObjectTypeInventoryObject) {
 		if (_panelLockedFlag) {
 			if (_locationMaskType != 0) {
 				return;
@@ -3905,7 +3909,7 @@ void TuckerEngine::setActionState() {
 	_currentActionObj2Num = _actionObj2Num;
 	_currentInfoString2SourceType = _actionObj2Type;
 	_actionRequiresTwoObjects = false;
-	if (_selectedObjectType < 3) {
+	if (_selectedObjectType != kObjectTypeInventoryObject) {
 		setSelectedObjectKey();
 	}
 }
@@ -3918,7 +3922,7 @@ void TuckerEngine::playSpeechForAction(int i) {
 		_speechActionCounterTable[i] = 0;
 	}
 	if (speechActionTable[i] >= 2000) {
-		if (_currentActionVerb == kVerbUse && _currentActionObj1Num == 6 && _currentInfoString1SourceType == 3) {
+		if (_currentActionVerb == kVerbUse && _currentActionObj1Num == 6 && _currentInfoString1SourceType == kObjectTypeInventoryObject) {
 			_speechSoundNum = 2395;
 		} else {
 			_speechSoundNum = _speechActionCounterTable[i] + speechActionTable[i];

@@ -434,9 +434,9 @@ bool TuckerEngine::handleSpecialObjectSelectionSequence() {
 	} else if (_part == kPartThree && _selectedObjectNum == 39) {
 		filename = "news2.pcx";
 		_flagsTable[135] = 1;
-	} else if (_currentInfoString1SourceType == 0 && _currentActionObj1Num == 259) {
+	} else if (_currentInfoString1SourceType == kObjectTypeNone && _currentActionObj1Num == 259) {
 		filename = "postit.pcx";
-	} else if (_currentInfoString1SourceType == 1 && _currentActionObj1Num == 91) {
+	} else if (_currentInfoString1SourceType == kObjectTypeAnimatedObject && _currentActionObj1Num == 91) {
 		filename = "memo.pcx";
 	} else {
 		return false;

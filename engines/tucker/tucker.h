@@ -109,6 +109,13 @@ enum VerbPreposition {
 	kVerbPrepositionTo   = 12
 };
 
+enum ObjectType {
+	kObjectTypeNone            = 0,
+	kObjectTypeAnimatedObject  = 1,
+	kObjectTypeCharacter       = 2,
+	kObjectTypeInventoryObject = 3
+};
+
 enum Part {
 	kPartInit  = 0,
 	kPartOne   = 1,
@@ -927,9 +934,9 @@ protected:
 	Verb _previousActionVerb;
 	int _nextAction;
 	int _selectedObjectNum;
-	int _selectedObjectType;
+	ObjectType _selectedObjectType;
 	int _selectedCharacterNum;
-	int _actionObj1Type, _actionObj2Type;
+	ObjectType _actionObj1Type, _actionObj2Type;
 	int _actionObj1Num, _actionObj2Num;
 	bool _actionRequiresTwoObjects;
 	bool _actionVerbLocked;
@@ -952,7 +959,7 @@ protected:
 	int _selectedCharacterDirection;
 	int _selectedCharacter2Num;
 	int _currentActionObj1Num, _currentActionObj2Num;
-	int _currentInfoString1SourceType, _currentInfoString2SourceType;
+	ObjectType _currentInfoString1SourceType, _currentInfoString2SourceType;
 	int _speechActionCounterTable[9];
 	int _actionCharacterNum;
 
