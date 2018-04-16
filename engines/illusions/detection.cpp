@@ -86,7 +86,7 @@ public:
 	}
 
 	virtual const char *getName() const {
-		return "Illusions Engine";
+		return "Illusions";
 	}
 
 	virtual const char *getOriginalCopyright() const {
