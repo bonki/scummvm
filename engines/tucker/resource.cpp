@@ -763,16 +763,16 @@ void TuckerEngine::loadCharPos() {
 			}
 			assert(_charPosCount < 4);
 			CharPos *charPos = &_charPosTable[_charPosCount++];
-			charPos->_xPos = i;
-			charPos->_yPos = t.getNextInteger();
-			charPos->_xSize = t.getNextInteger();
-			charPos->_ySize = t.getNextInteger();
-			charPos->_xWalkTo = t.getNextInteger();
-			charPos->_yWalkTo = t.getNextInteger();
-			charPos->_flagNum = t.getNextInteger();
-			charPos->_flagValue = t.getNextInteger();
-			charPos->_direction = t.getNextInteger();
-			charPos->_name = t.getNextInteger();
+			charPos->_xPos        = i;
+			charPos->_yPos        = t.getNextInteger();
+			charPos->_xSize       = t.getNextInteger();
+			charPos->_ySize       = t.getNextInteger();
+			charPos->_xWalkTo     = t.getNextInteger();
+			charPos->_yWalkTo     = t.getNextInteger();
+			charPos->_flagNum     = t.getNextInteger();
+			charPos->_flagValue   = t.getNextInteger();
+			charPos->_direction   = t.getNextInteger();
+			charPos->_name        = t.getNextInteger();
 			charPos->_description = t.getNextInteger();
 		}
 		int quitLoop = 0;

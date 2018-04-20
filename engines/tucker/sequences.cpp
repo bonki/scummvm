@@ -332,32 +332,32 @@ void TuckerEngine::handleMapSequence() {
 		updateMouseState();
 		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
 		_fullRedraw = true;
-		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
+		if (_flagsTable[7] > 0 && _mousePos.x > 30 && _mousePos.x < 86 && _mousePos.y > 36 && _mousePos.y < 86) {
 			textNum = 13;
 			_nextLocation = (_part == kPartOne) ? kLocationSeedyStreet : kLocationSeedyStreetPartThree;
 			xPos = 620;
 			yPos = 130;
-		} else if (_flagsTable[7] > 1 && _mousePosX > 60 && _mousePosX < 120 && _mousePosY > 120 && _mousePosY < 170) {
+		} else if (_flagsTable[7] > 1 && _mousePos.x > 60 && _mousePos.x < 120 && _mousePos.y > 120 && _mousePos.y < 170) {
 			textNum = 14;
 			_nextLocation = (_part == kPartOne) ? kLocationMall : kLocationMallPartThree;
 			xPos = 344;
 			yPos = 120;
-		} else if (_flagsTable[7] > 2 && _mousePosX > 160 && _mousePosX < 210 && _mousePosY > 110 && _mousePosY < 160) {
+		} else if (_flagsTable[7] > 2 && _mousePos.x > 160 && _mousePos.x < 210 && _mousePos.y > 110 && _mousePos.y < 160) {
 			textNum = 15;
 			_nextLocation = (_part == kPartOne) ? kLocationPark : kLocationParkPartThree;
 			xPos = 590;
 			yPos = 130;
-		} else if ((_flagsTable[7] == 4 || _flagsTable[7] == 6) && _mousePosX > 150 && _mousePosX < 200 && _mousePosY > 20 && _mousePosY < 70) {
+		} else if ((_flagsTable[7] == 4 || _flagsTable[7] == 6) && _mousePos.x > 150 && _mousePos.x < 200 && _mousePos.y > 20 && _mousePos.y < 70) {
 			textNum = 16;
 			_nextLocation = (_part == kPartOne) ? kLocationOutsideMuseum : kLocationOutsideMuseumPartThree;
 			xPos = 20;
 			yPos = 130;
-		} else if (_flagsTable[120] == 1 && _mousePosX > 240 && _mousePosX < 290 && _mousePosY > 35 && _mousePosY < 90) {
+		} else if (_flagsTable[120] == 1 && _mousePos.x > 240 && _mousePos.x < 290 && _mousePos.y > 35 && _mousePos.y < 90) {
 			textNum = 17;
 			_nextLocation = (_part == kPartOne) ? kLocationDocks : kLocationDocksPartThree;
 			xPos = 20;
 			yPos = 124;
-		} else if (_mousePosX > 135 && _mousePosX < 185 && _mousePosY > 170 && _mousePosY < 200) {
+		} else if (_mousePos.x > 135 && _mousePos.x < 185 && _mousePos.y > 170 && _mousePos.y < 200) {
 			textNum = 18;
 			_nextLocation = _location;
 			if (!_noPositionChangeAfterMap) {
@@ -381,7 +381,7 @@ void TuckerEngine::handleMapSequence() {
 			}
 		}
 		if (textNum > 0) {
-			drawSpeechText(_scrollOffset + _mousePosX + 8, _mousePosY - 10, _infoBarBuf, textNum, 96);
+			drawSpeechText(_scrollOffset + _mousePos.x + 8, _mousePos.y - 10, _infoBarBuf, textNum, 96);
 		}
 		redrawScreen(_scrollOffset);
 		if (_fadePaletteCounter < 14) {

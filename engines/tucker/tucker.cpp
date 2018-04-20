@@ -198,8 +198,9 @@ void TuckerEngine::resetVariables() {
 	memset(_locationMusicsTable, 0, sizeof(_locationMusicsTable));
 	_locationMusicsCount = 0;
 
-	_mousePosX = _mousePosY = 0;
-	_prevMousePosX = _prevMousePosY = 0;
+	//_mousePosX = _mousePosY = 0;
+	//_prevMousePosX = _prevMousePosY = 0;
+	_mousePos = _prevMousePos = Common::Point(0, 0);
 	_mouseButtonsMask = 0;
 	_mouseClick = 0;
 	_saveOrLoadGamePanel = 0;
@@ -690,22 +691,18 @@ void TuckerEngine::parseEvents() {
 			_lastKeyPressed = ev.kbd.keycode;
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			updateCursorPos(ev.mouse.x, ev.mouse.y);
+			updateCursorPos(ev.mouse);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			_mouseButtonsMask |= 1;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			_mouseButtonsMask |= 2;
 			_inputKeys[kInputKeySkipSpeech] = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			updateCursorPos(ev.mouse.x, ev.mouse.y);
 			break;
 		case Common::EVENT_WHEELUP:
 			_mouseButtonsMask |= 4;
@@ -736,11 +733,9 @@ void TuckerEngine::parseEvents() {
 	_quitGame = shouldQuit();
 }
 
-void TuckerEngine::updateCursorPos(int x, int y) {
-	_prevMousePosX = _mousePosX;
-	_prevMousePosY = _mousePosY;
-	_mousePosX = x;
-	_mousePosY = y;
+void TuckerEngine::updateCursorPos(Common::Point mousePos) {
+	_prevMousePos = _mousePos;
+	_mousePos     = mousePos;
 }
 
 void TuckerEngine::setCursorStyle(CursorStyle style) {
@@ -831,7 +826,7 @@ void TuckerEngine::updateMouseState() {
 		_mouseWheelUp   = _mouseButtonsMask & 4;
 		_mouseWheelDown = _mouseButtonsMask & 8;
 		_mouseButtonsMask = 0;
-		if (_prevMousePosX == _mousePosX && _prevMousePosY == _mousePosY) {
+		if (_prevMousePos == _mousePos) {
 			++_mouseIdleCounter;
 		} else {
 			_mouseIdleCounter = 0;
@@ -1137,7 +1132,7 @@ void TuckerEngine::updateCursor() {
 	if (!_leftMouseButtonPressed) {
 		_mouseClick = 0;
 	}
-	if (_mousePosY >= 150) {
+	if (_mousePos.y >= 150) {
 		if (_mouseWheelUp)
 			moveDownInventoryObjects();
 		else if (_mouseWheelDown)
@@ -1148,12 +1143,12 @@ void TuckerEngine::updateCursor() {
 		_mouseClick = 1;
 		clearItemsGfx();
 		drawInfoString();
-		if (_mousePosY >= 150 && _mousePosX < 212) {
-			if (_mousePosX < 200) {
+		if (_mousePos.y >= 150 && _mousePos.x < 212) {
+			if (_mousePos.x < 200) {
 				setActionVerbUnderCursor();
 				_actionVerbLocked = true;
 				_actionRequiresTwoObjects = false;
-			} else if (_mousePosY < 175) {
+			} else if (_mousePos.y < 175) {
 				moveDownInventoryObjects();
 			} else {
 				moveUpInventoryObjects();
@@ -1392,7 +1387,7 @@ void TuckerEngine::saveOrLoad() {
 	} else {
 		drawSpeechText(_scrollOffset + 120, 170, _infoBarBuf, 21, 102);
 	}
-	if (_mousePosY > 140) {
+	if (_mousePos.y > 140) {
 		if (_mouseWheelUp && _currentSaveLoadGameState < kLastSaveSlot) {
 			++_currentSaveLoadGameState;
 			_forceRedrawPanelItems = true;
@@ -1405,26 +1400,30 @@ void TuckerEngine::saveOrLoad() {
 	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_mouseClick = 1;
-		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 154 && _mousePosY < 170) {
+
+		if (Common::Rect(228, 154, 240, 170).contains(_mousePos)) {
 			if (_currentSaveLoadGameState < kLastSaveSlot) {
 				++_currentSaveLoadGameState;
 				_forceRedrawPanelItems = true;
 			}
 			return;
 		}
-		if (_mousePosX > 228 && _mousePosX < 240 && _mousePosY > 170 && _mousePosY < 188) {
+
+		if (Common::Rect(228, 170, 240, 188).contains(_mousePos)) {
 			if (_currentSaveLoadGameState > 1) {
 				--_currentSaveLoadGameState;
 				_forceRedrawPanelItems = true;
 			}
 			return;
 		}
-		if (_mousePosX > 244 && _mousePosX < 310 && _mousePosY > 170 && _mousePosY < 188) {
+
+		if (Common::Rect(224, 170, 310, 188).contains(_mousePos)) {
 			_forceRedrawPanelItems = true;
 			_panelType = kPanelTypeLoadSavePlayQuit;
 			return;
 		}
-		if (_mousePosX > 260 && _mousePosX < 290 && _mousePosY > 152 && _mousePosY < 168) {
+
+		if (Common::Rect(260, 152, 290, 168).contains(_mousePos)) {
 			if (_saveOrLoadGamePanel == 1) {
 				saveGameState(_currentSaveLoadGameState, "");
 			} else if (hasSavegame && _currentSaveLoadGameState > 0) {
@@ -1444,21 +1443,21 @@ void TuckerEngine::handleMouseOnPanel() {
 	}
 	if (_leftMouseButtonPressed && _mouseClick == 0) {
 		_mouseClick = 1;
-		if (_mousePosY < 160 || _mousePosY > 176) {
+		if (_mousePos.y < 160 || _mousePos.y > 176) {
 			return;
 		}
-		if (_mousePosX < 45 || _mousePosX > 275) {
+		if (_mousePos.x < 45 || _mousePos.x > 275) {
 			return;
 		}
-		if (_mousePosX < 96) {
+		if (_mousePos.x < 96) {
 			_saveOrLoadGamePanel = 0;
 			_forceRedrawPanelItems = true;
 			_panelType = kPanelTypeLoadSaveSavegame;
-		} else if (_mousePosX < 158) {
+		} else if (_mousePos.x < 158) {
 			_saveOrLoadGamePanel = 1;
 			_forceRedrawPanelItems = true;
 			_panelType = kPanelTypeLoadSaveSavegame;
-		} else if (_mousePosX < 218) {
+		} else if (_mousePos.x < 218) {
 			_forceRedrawPanelItems = true;
 			_panelType = kPanelTypeNormal;
 			setCursorState(kCursorStateNormal);
@@ -1527,11 +1526,11 @@ void TuckerEngine::drawConversationTexts() {
 	bool flag = false;
 	for (int i = 0; i <  _conversationOptionsCount; ++i) {
 		int color = 108;
-		if ((_mousePosY > y && _mousePosY < y + 11) || _nextTableToLoadIndex == i) {
+		if ((_mousePos.y > y && _mousePos.y < y + 11) || _nextTableToLoadIndex == i) {
 			color = 106;
 		}
 		drawSpeechText(0, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
-		if (_mousePosY > y && _mousePosY < _conversationOptionLinesCount * 10 + y + 1) {
+		if (_mousePos.y > y && _mousePos.y < _conversationOptionLinesCount * 10 + y + 1) {
 			_nextTableToLoadIndex = i;
 			flag = true;
 		}
@@ -3527,31 +3526,33 @@ void TuckerEngine::moveDownInventoryObjects() {
 }
 
 void TuckerEngine::setActionVerbUnderCursor() {
-	if (_mousePosY < 150) {
+//warning("(%d, %d)", _mousePos.x, _mousePos.y);
+
+	if (_mousePos.y < 150) {
 		_actionVerb = kVerbWalk;
-	} else if (_mousePosX > 195) {
+	} else if (_mousePos.x > 195) {
 		_actionVerb = kVerbLook;
 	} else if (_panelStyle == kPanelStyleVerbs) {
-		_actionVerb = (Verb)(((_mousePosY - 150) / 17) * 3 + (_mousePosX / 67));
+		_actionVerb = (Verb)(((_mousePos.y - 150) / 17) * 3 + (_mousePos.x / 67));
 	} else {
 		_actionVerb = kVerbWalk;
-		if (_mousePosX < 30) {
+		if (_mousePos.x < 30) {
 			_actionVerb = kVerbMove;
-		} else if (_mousePosX > 130 && _mousePosX < 165) {
+		} else if (_mousePos.x > 130 && _mousePos.x < 165) {
 			_actionVerb = kVerbGive;
 		} else {
-			if (_mousePosY < 175) {
-				if (_mousePosX < 67) {
+			if (_mousePos.y < 175) {
+				if (_mousePos.x < 67) {
 					_actionVerb = kVerbOpen;
-				} else if (_mousePosX > 164) {
+				} else if (_mousePos.x > 164) {
 					_actionVerb = kVerbTake;
-				} else if (_mousePosX > 99) {
+				} else if (_mousePos.x > 99) {
 					_actionVerb = kVerbClose;
 				}
 			} else {
-				if (_mousePosX < 85) {
+				if (_mousePos.x < 85) {
 					_actionVerb = kVerbLook;
-				} else if (_mousePosX > 165) {
+				} else if (_mousePos.x > 165) {
 					_actionVerb = kVerbTalk;
 				} else {
 					_actionVerb = kVerbUse;
@@ -3562,20 +3563,20 @@ void TuckerEngine::setActionVerbUnderCursor() {
 }
 
 int TuckerEngine::getObjectUnderCursor() {
-	if (_mousePosY > 140) {
+	if (_mousePos.y > 140) {
 		return -1;
 	}
 	for (int i = 0; i < _locationObjectsCount; ++i) {
-		if (_mousePosX + _scrollOffset + 1 <= _locationObjectsTable[i]._xPos) {
+		if (_mousePos.x + _scrollOffset + 1 <= _locationObjectsTable[i]._xPos) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _locationObjectsTable[i]._xPos + _locationObjectsTable[i]._xSize) {
+		if (_mousePos.x + _scrollOffset >= _locationObjectsTable[i]._xPos + _locationObjectsTable[i]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _locationObjectsTable[i]._yPos) {
+		if (_mousePos.y <= _locationObjectsTable[i]._yPos) {
 			continue;
 		}
-		if (_mousePosY >= _locationObjectsTable[i]._yPos + _locationObjectsTable[i]._ySize) {
+		if (_mousePos.y >= _locationObjectsTable[i]._yPos + _locationObjectsTable[i]._ySize) {
 			continue;
 		}
 		_selectedObjectType = 0;
@@ -3587,8 +3588,8 @@ int TuckerEngine::getObjectUnderCursor() {
 }
 
 void TuckerEngine::setSelectedObjectKey() {
-	const int x = _mousePosX + _scrollOffset;
-	if (_mousePosY > 139 && _nextAction == 0) {
+	const int x = _mousePos.x + _scrollOffset;
+	if (_mousePos.y > 139 && _nextAction == 0) {
 		return;
 	}
 	_panelLockedFlag = true;
@@ -3600,16 +3601,16 @@ void TuckerEngine::setSelectedObjectKey() {
 	if (_selectedObjectType == 0) {
 		if (_selectedObjectNum == 0) {
 			_selectedObject._xPos = x;
-			_selectedObject._yPos = _mousePosY;
+			_selectedObject._yPos = _mousePos.y;
 		} else {
 			_selectedObject._xPos = _locationObjectsTable[_selectedCharacterNum]._standX;
 			_selectedObject._yPos = _locationObjectsTable[_selectedCharacterNum]._standY;
 			if (_actionVerb == kVerbWalk || _actionVerb == kVerbUse) {
 				_selectedObject._locationObjectLocation = _locationObjectsTable[_selectedCharacterNum]._location;
-				_selectedObject._locationObjectToX = _locationObjectsTable[_selectedCharacterNum]._toX;
-				_selectedObject._locationObjectToY = _locationObjectsTable[_selectedCharacterNum]._toY;
-				_selectedObject._locationObjectToX2 = _locationObjectsTable[_selectedCharacterNum]._toX2;
-				_selectedObject._locationObjectToY2 = _locationObjectsTable[_selectedCharacterNum]._toY2;
+				_selectedObject._locationObjectToX      = _locationObjectsTable[_selectedCharacterNum]._toX;
+				_selectedObject._locationObjectToY      = _locationObjectsTable[_selectedCharacterNum]._toY;
+				_selectedObject._locationObjectToX2     = _locationObjectsTable[_selectedCharacterNum]._toX2;
+				_selectedObject._locationObjectToY2     = _locationObjectsTable[_selectedCharacterNum]._toY2;
 				_selectedObject._locationObjectToWalkX2 = _locationObjectsTable[_selectedCharacterNum]._toWalkX2;
 				_selectedObject._locationObjectToWalkY2 = _locationObjectsTable[_selectedCharacterNum]._toWalkY2;
 			}
@@ -3632,7 +3633,7 @@ void TuckerEngine::setSelectedObjectKey() {
 	}
 	if (_selectedObject._yPos == 0) {
 		_selectedObject._xPos = x;
-		_selectedObject._yPos = _mousePosY;
+		_selectedObject._yPos = _mousePos.y;
 	}
 	_selectedObjectLocationMask = testLocationMask(_selectedObject._xPos, _selectedObject._yPos);
 	if (!_selectedObjectLocationMask && _objectKeysLocationTable[_location] == 1) {
@@ -3718,10 +3719,10 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 	if (_panelType != kPanelTypeNormal) {
 		return;
 	}
-	if (_mousePosY < 150 || _mousePosX < 212) {
+	if (_mousePos.y < 150 || _mousePos.x < 212) {
 		return;
 	}
-	int pos = ((_mousePosY - 150) / 25) * 3 + (_mousePosX - 212) / 36;
+	int pos = ((_mousePos.y - 150) / 25) * 3 + (_mousePos.x - 212) / 36;
 	int obj = _inventoryObjectsOffset + pos;
 	if (_inventoryObjectsCount - 1 < obj) {
 		return;
@@ -3767,20 +3768,20 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 }
 
 int TuckerEngine::setCharacterUnderCursor() {
-	if (_mousePosY > 140) {
+	if (_mousePos.y > 140) {
 		return -1;
 	}
 	for (int i = 0; i < _charPosCount; ++i) {
-		if (_mousePosX + _scrollOffset <= _charPosTable[i]._xPos) {
+		if (_mousePos.x + _scrollOffset <= _charPosTable[i]._xPos) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _charPosTable[i]._xPos + _charPosTable[i]._xSize) {
+		if (_mousePos.x + _scrollOffset >= _charPosTable[i]._xPos + _charPosTable[i]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _charPosTable[i]._yPos) {
+		if (_mousePos.y <= _charPosTable[i]._yPos) {
 			continue;
 		}
-		if (_mousePosY >= _charPosTable[i]._yPos + _charPosTable[i]._ySize) {
+		if (_mousePos.y >= _charPosTable[i]._yPos + _charPosTable[i]._ySize) {
 			continue;
 		}
 		if (_charPosTable[i]._flagNum == 0 || _flagsTable[_charPosTable[i]._flagNum] == _charPosTable[i]._flagValue) {
@@ -3794,7 +3795,7 @@ int TuckerEngine::setCharacterUnderCursor() {
 }
 
 int TuckerEngine::setLocationAnimationUnderCursor() {
-	if (_mousePosY > 140) {
+	if (_mousePos.y > 140) {
 		return -1;
 	}
 	for (int i = _locationAnimationsCount - 1; i >= 0; --i) {
@@ -3802,16 +3803,16 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 			continue;
 
 		int num = _locationAnimationsTable[i]._graphicNum;
-		if (_mousePosX + _scrollOffset + 1 <= _dataTable[num]._xDest) {
+		if (_mousePos.x + _scrollOffset + 1 <= _dataTable[num]._xDest) {
 			continue;
 		}
-		if (_mousePosX + _scrollOffset >= _dataTable[num]._xDest + _dataTable[num]._xSize) {
+		if (_mousePos.x + _scrollOffset >= _dataTable[num]._xDest + _dataTable[num]._xSize) {
 			continue;
 		}
-		if (_mousePosY <= _dataTable[num]._yDest) {
+		if (_mousePos.y <= _dataTable[num]._yDest) {
 			continue;
 		}
-		if (_mousePosY >= _dataTable[num]._yDest + _dataTable[num]._ySize) {
+		if (_mousePos.y >= _dataTable[num]._yDest + _dataTable[num]._ySize) {
 			continue;
 		}
 		if (_locationAnimationsTable[i]._selectable == 0) {

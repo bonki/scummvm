@@ -465,7 +465,7 @@ protected:
 	void mainLoop();
 	void waitForTimer(int ticksCount);
 	void parseEvents();
-	void updateCursorPos(int x, int y);
+	void updateCursorPos(Common::Point mousePos);
 	void setCursorStyle(CursorStyle num);
 	void setCursorState(CursorState state);
 	void showCursor(bool visible);
@@ -848,8 +848,8 @@ protected:
 	const uint8 *_locationWidthTable;
 	uint8 *_locationHeightTable;
 
-	int _mousePosX, _mousePosY;
-	int _prevMousePosX, _prevMousePosY;
+	Common::Point _mousePos;
+	Common::Point _prevMousePos;
 	int _mouseButtonsMask;
 	int _mouseClick;
 	int _saveOrLoadGamePanel;
