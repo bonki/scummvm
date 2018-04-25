@@ -203,7 +203,7 @@ bool MidiParser_SH::loadMusic(byte *musData, uint32 musDataSize) {
 	return true;
 }
 
-void MidiParser_SH::unloadMusic() {
+/*void MidiParser_SH::unloadMusic() {
 	Common::StackLock lock(_mutex);
 
 	if (_musData) {
@@ -213,7 +213,7 @@ void MidiParser_SH::unloadMusic() {
 	}
 
 	MidiParser::unloadMusic();
-}
+}*/
 
 /*----------------------------------------------------------------*/
 
@@ -314,7 +314,7 @@ bool MusicPlayer::play(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	_midiData = new byte[dataSize];
+	_midiData = (byte *)malloc(dataSize);
 	stream.read(_midiData, dataSize);
 
 	byte  *dataPos = _midiData;

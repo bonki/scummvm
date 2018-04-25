@@ -53,7 +53,7 @@ protected:
 
 public:
 	bool loadMusic(byte *musData, uint32 musSize);
-	virtual void unloadMusic();
+	//virtual void unloadMusic();
 
 private:
 	byte  *_musData;
@@ -71,6 +71,8 @@ public:
 	 * Play a given music file
 	 */
 	bool play(Common::SeekableReadStream &stream);
+
+	void send(uint32 b) { _driver->send(b); }
 
 	/**
 	 * Returns true if the player successfully loaded a driver
