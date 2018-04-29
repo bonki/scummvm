@@ -38,8 +38,6 @@
 
 namespace Prince {
 
-#define kBadSVG 99
-
 enum {
 	kSavegameVersionCurrent = 1,
 	kSavegameVersionMinimum = 1
