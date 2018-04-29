@@ -39,15 +39,25 @@
 namespace Prince {
 
 #define kBadSVG 99
-#define kSavegameVersion 1
+
+enum {
+	kSavegameVersionCurrent = 1,
+	kSavegameVersionMinimum = 1
+};
 
 class InterpreterFlags;
 class Interpreter;
 
 WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in, SavegameHeader &header, bool skipThumbnail) {
+	header.saveName.clear();
+	header.thumbnail = nullptr;
+	header.saveDate  = 0;
+	header.saveTime  = 0;
+	header.playTime  = 0;
+
 	// Get the savegame version
 	header.version = in->readByte();
-	if (header.version > kSavegameVersion)
+	if (header.version < kSavegameVersionMinimum || header.version > kSavegameVersionCurrent)
 		return false;
 
 	// Read in the string
@@ -62,11 +72,9 @@ WARN_UNUSED_RESULT bool PrinceEngine::readSavegameHeader(Common::InSaveFile *in,
 	}
 
 	// Read in save date/time
-	header.saveYear = in->readSint16LE();
-	header.saveMonth = in->readSint16LE();
-	header.saveDay = in->readSint16LE();
-	header.saveHour = in->readSint16LE();
-	header.saveMinutes = in->readSint16LE();
+	header.saveDate = in->readUint32LE();
+	header.saveTime = in->readUint32LE();
+	header.playTime = in->readUint32LE();
 
 	return true;
 }
@@ -109,7 +117,7 @@ Common::Error PrinceEngine::saveGameState(int slot, const Common::String &desc) 
 	// Write out the ScummVM savegame header
 	SavegameHeader header;
 	header.saveName = desc;
-	header.version = kSavegameVersion;
+	header.version = kSavegameVersionCurrent;
 	writeSavegameHeader(saveFile, header);
 
 	// Write out the data of the savegame
@@ -130,7 +138,7 @@ void PrinceEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader 
 	// Write out a savegame header
 	out->write(kSavegameStr, kSavegameStrSize + 1);
 
-	out->writeByte(kSavegameVersion);
+	out->writeByte(kSavegameVersionCurrent);
 
 	// Write savegame name
 	out->write(header.saveName.c_str(), header.saveName.size() + 1);
@@ -148,13 +156,14 @@ void PrinceEngine::writeSavegameHeader(Common::OutSaveFile *out, SavegameHeader 
 	delete thumb;
 
 	// Write out the save date/time
-	TimeDate td;
-	g_system->getTimeAndDate(td);
-	out->writeSint16LE(td.tm_year + 1900);
-	out->writeSint16LE(td.tm_mon + 1);
-	out->writeSint16LE(td.tm_mday);
-	out->writeSint16LE(td.tm_hour);
-	out->writeSint16LE(td.tm_min);
+	TimeDate curTime;
+	_system->getTimeAndDate(curTime);
+	header.saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	header.saveTime = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min)     & 0xFF) <<  8) | ((curTime.tm_sec)         & 0xFF);
+	header.playTime = g_engine->getTotalPlayTime() / 1000;
+	out->writeUint32LE(header.saveDate);
+	out->writeUint32LE(header.saveTime);
+	out->writeUint32LE(header.playTime);
 }
 
 void PrinceEngine::syncGame(Common::SeekableReadStream *readStream, Common::WriteStream *writeStream) {

@@ -169,6 +169,7 @@ bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSimpleSavesNames);
@@ -246,8 +247,23 @@ SaveStateDescriptor PrinceMetaEngine::querySaveMetaInfos(const char *target, int
 			// Create the return descriptor
 			SaveStateDescriptor desc(slot, header.saveName);
 			desc.setThumbnail(header.thumbnail);
-			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
-			desc.setSaveTime(header.saveHour, header.saveMinutes);
+
+			if (header.saveDate) {
+				int day   = (header.saveDate >> 24) & 0xFF;
+				int month = (header.saveDate >> 16) & 0xFF;
+				int year  =  header.saveDate        & 0xFFFF;
+				desc.setSaveDate(year, month, day);
+			}
+
+			if (header.saveTime) {
+				int hour    = (header.saveTime >> 16) & 0xFF;
+				int minutes = (header.saveTime >>  8) & 0xFF;
+				desc.setSaveTime(hour, minutes);
+			}
+
+			if (header.playTime) {
+				desc.setPlayTime(header.playTime * 1000);
+			}
 
 			return desc;
 		}
