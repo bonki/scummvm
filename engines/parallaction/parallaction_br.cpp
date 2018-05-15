@@ -103,7 +103,7 @@ Common::Error Parallaction_br::init() {
 
 	_countersNames = 0;
 
-	_saveLoad = new SaveLoad_br(this, _saveFileMan);
+	_saveLoad = new SaveLoad_br(this, _saveFileMan, _targetName.c_str());
 
 	initInventory();
 	setupBalloonManager();

@@ -39,7 +39,7 @@ protected:
 	int buildSaveFileList(Common::StringArray& l);
 
 public:
-	SaveLoad(Common::SaveFileManager* saveFileMan, const char *prefix) : _saveFileMan(saveFileMan), _saveFilePrefix(prefix) { }
+	SaveLoad(Common::SaveFileManager* saveFileMan, const char *saveFilePrefix) : _saveFileMan(saveFileMan), _saveFilePrefix(saveFilePrefix) { }
 	virtual ~SaveLoad() { }
 
 	virtual bool loadGame();
@@ -61,7 +61,7 @@ protected:
 	void renameOldSavefiles();
 
 public:
-	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) { }
+	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan, const char *saveFilePrefix) : SaveLoad(saveFileMan, saveFilePrefix), _vm(vm) { }
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
@@ -74,7 +74,7 @@ class SaveLoad_br : public SaveLoad {
 //	Parallaction_br *_vm;
 
 public:
-	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
+	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan, const char *saveFilePrefix) : SaveLoad(saveFileMan, saveFilePrefix) { }
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);

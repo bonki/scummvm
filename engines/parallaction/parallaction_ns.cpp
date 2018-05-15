@@ -207,7 +207,7 @@ Common::Error Parallaction_ns::init() {
 
 	_location._animations.push_front(_char._ani);
 
-	_saveLoad = new SaveLoad_ns(this, _saveFileMan);
+	_saveLoad = new SaveLoad_ns(this, _saveFileMan, _targetName.c_str());
 
 	initInventory();
 	setupBalloonManager();
