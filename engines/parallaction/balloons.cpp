@@ -329,14 +329,13 @@ int BalloonManager_ns::createBalloon(int16 w, int16 h, int16 winding, uint16 bor
 
 
 int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, uint16 y, uint16 winding, TextColor textColor) {
-
 	int16 w, h;
 
 	_se.calc(text, MAX_BALLOON_WIDTH);
-	w = _se.width() + 14;
+	w = _se.width()  + 14;
 	h = _se.height() + 20;
 
-	int id = createBalloon(w+5, h, winding, 1);
+	int id = createBalloon(w + 5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
@@ -351,7 +350,6 @@ int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, ui
 }
 
 int BalloonManager_ns::setDialogueBalloon(const Common::String &text, uint16 winding, TextColor textColor) {
-
 	int16 w, h;
 
 	_se.calc(text, MAX_BALLOON_WIDTH);
@@ -387,7 +385,6 @@ void BalloonManager_ns::setBalloonText(uint id, const Common::String &text, Text
 
 
 int BalloonManager_ns::setLocationBalloon(const Common::String &text, bool endGame) {
-
 	int16 w, h;
 
 	_se.calc(text, MAX_BALLOON_WIDTH);
@@ -408,7 +405,6 @@ int BalloonManager_ns::setLocationBalloon(const Common::String &text, bool endGa
 }
 
 int BalloonManager_ns::hitTestDialogueBalloon(int x, int y) {
-
 	Common::Point p;
 
 	for (uint i = 0; i < _numBalloons; i++) {
@@ -483,7 +479,6 @@ class StringWriter_BR : public WrappedLineFormatter {
 protected:
 	StringWriter_BR(Font *font, byte color) : WrappedLineFormatter(font), _width(0), _height(0),
 			_color(color), _x(0), _y(0), _surf(NULL) {
-
 	}
 
 	virtual void setup() {
@@ -523,8 +518,6 @@ public:
 	}
 
 };
-
-
 
 
 class BalloonManager_br : public BalloonManager {
@@ -699,7 +692,6 @@ int BalloonManager_br::setLocationBalloon(const Common::String &text, bool endGa
 }
 
 int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
-
 	for (uint i = 0; i < _numBalloons; i++) {
 		if (_intBalloons[i].box.contains(x, y)) {
 			return i;
@@ -724,8 +716,6 @@ void BalloonManager_br::cacheAnims() {
 		_rightBalloon = _vm->_disk->loadFrames("fumdx.ani");
 	}
 }
-
-
 
 BalloonManager_br::BalloonManager_br(Parallaction_br *vm, Font *font) : _vm(vm), _numBalloons(0),
 	_leftBalloon(0), _rightBalloon(0), _sw(font), _se(font) {
@@ -753,7 +743,5 @@ void Parallaction_ns::setupBalloonManager() {
 void Parallaction_br::setupBalloonManager() {
 	_balloonMan = new BalloonManager_br(this, _dialogueFont);
 }
-
-
 
 } // namespace Parallaction

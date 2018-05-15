@@ -27,20 +27,17 @@
 
 #include "graphics/primitives.h"			// for Graphics::drawLine
 
-
 #include "parallaction/exec.h"
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/saveload.h"
 #include "parallaction/sound.h"
 
-
 namespace Parallaction {
 
 /*
 	intro callables data members
 */
-
 
 static uint16 _rightHandPositions[684] = {
 	0x0064, 0x0046, 0x006c, 0x0046, 0x0074, 0x0046, 0x007c, 0x0046,
@@ -136,12 +133,10 @@ static uint16 _rightHandPositions[684] = {
 */
 
 void Parallaction_ns::_c_null(void *parm) {
-
 	return;
 }
 
 void Parallaction_ns::_c_play_boogie(void *parm) {
-
 	static uint16 flag = 1;
 
 	if (flag == 0)
@@ -161,7 +156,6 @@ void Parallaction_ns::_c_score(void *parm) {
 }
 
 void Parallaction_ns::_c_fade(void *parm) {
-
 	Palette pal;
 	_gfx->setPalette(pal);
 
@@ -206,7 +200,7 @@ void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 
 	// calculate destination for the sarcophagus
 	int16 destX = _freeSarcophagusSlotX;
-	_sarcophagusDeltaX = destX - _moveSarcGetZone->getX();			// x movement delta
+	_sarcophagusDeltaX = destX - _moveSarcGetZone->getX(); // x movement delta
 	int16 destY = _moveSarcGetZone->getY() - (_sarcophagusDeltaX / 20); // gently degrade y when moving sideways
 
 	// set the new empty position (maybe this should be done on stopMovingSarcophagus?)
@@ -214,11 +208,11 @@ void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 
 	// calculate which way and how many steps the character should move
 	int16 numSteps = _sarcophagusDeltaX / 2; // default to right
-	int16 delta = 2;	// default to right
+	int16 delta = 2; // default to right
 	if (_sarcophagusDeltaX < 0) {
 		// move left
-		numSteps = -numSteps;	// keep numSteps positive
-		delta = -delta;			// make delta negative if moving to left
+		numSteps = -numSteps; // keep numSteps positive
+		delta = -delta; // make delta negative if moving to left
 	}
 
 	// GROSS HACK: since there is no obvious way to provide additional parameters to a script,
@@ -235,7 +229,6 @@ void Parallaction_ns::startMovingSarcophagus(ZonePtr sarc) {
 }
 
 void Parallaction_ns::stopMovingSarcophagus() {
-
 	// moves both sarcophagus zones at the destination, so that the user
 	// can interact with them
 	_moveSarcGetZone->translate(_sarcophagusDeltaX, -_sarcophagusDeltaX / 20);
@@ -266,12 +259,9 @@ void Parallaction_ns::_c_moveSarc(void *parm) {
 	}
 }
 
-
-
-
 void Parallaction_ns::_c_contaFoglie(void *parm) {
-
 	num_foglie++;
+
 	if (num_foglie != 6)
 		return;
 
@@ -303,10 +293,7 @@ void Parallaction_ns::_c_onMouse(void *parm) {
 	_input->setMouseState(MOUSE_ENABLED_SHOW);
 }
 
-
-
 void Parallaction_ns::_c_setMask(void *parm) {
-
 	if (!_gfx->_backgroundInfo->hasMask())
 		return;
 
@@ -349,12 +336,11 @@ void Parallaction_ns::_c_endComment(void *param) {
 }
 
 void Parallaction_ns::_c_frankenstein(void *parm) {
-
 	Palette pal0(_gfx->_palette);
 	Palette pal1;
 
 	for (uint16 i = 0; i < 32; i++) {
-		pal0.setEntry(i, -1, 0, 0);			// leaves reds unchanged while zeroing other components
+		pal0.setEntry(i, -1, 0, 0); // leaves reds unchanged while zeroing other components
 	}
 
 	for (uint16 _di = 0; _di < 30; _di++) {
@@ -372,9 +358,7 @@ void Parallaction_ns::_c_frankenstein(void *parm) {
 	return;
 }
 
-
 void Parallaction_ns::_c_finito(void *parm) {
-
 	_saveLoad->setPartComplete(_char.getBaseName());
 
 	cleanInventory();
@@ -383,7 +367,6 @@ void Parallaction_ns::_c_finito(void *parm) {
 	_gfx->setPalette(_gfx->_palette);
 
 	startEndPartSequence();
-
 
 	return;
 }
@@ -394,9 +377,11 @@ void Parallaction_ns::_c_ridux(void *parm) {
 }
 
 void Parallaction_ns::_c_testResult(void *parm) {
-	if (_inTestResult) {		// NOTE: _inTestResult has been added because the scripts call _c_testResult multiple times to cope with
-								// the multiple buffering that was used in the original engine. _inTestResult now prevents the engine
-								// from crashing when the scripts are executed.
+	// NOTE
+	// _inTestResult has been added because the scripts call _c_testResult multiple
+	// times to cope with the multiple buffering that was used in the original engine.
+	// _inTestResult now prevents the engine from crashing when the scripts are executed.
+	if (_inTestResult) {
 		return;
 	}
 	_inTestResult = true;
@@ -464,7 +449,6 @@ void Parallaction_ns::_c_endIntro(void *parm) {
 }
 
 void Parallaction_ns::_c_moveSheet(void *parm) {
-
 	static uint16 x = 319;
 
 	if (x > 66)
@@ -497,7 +481,6 @@ void zeroMask(int x, int y, int color, void *data) {
 }
 
 void Parallaction_ns::_c_sketch(void *parm) {
-
 	static uint16 index = 1;
 
 	uint16 newx;
@@ -531,11 +514,7 @@ void Parallaction_ns::_c_sketch(void *parm) {
 	return;
 }
 
-
-
-
 void Parallaction_ns::_c_shade(void *parm) {
-
 	Common::Rect r(
 		_rightHandAnim->getX() - 36,
 		_rightHandAnim->getY() - 36,
@@ -551,7 +530,6 @@ void Parallaction_ns::_c_shade(void *parm) {
 	}
 
 	return;
-
 }
 
 int16 projectorProgram[] = {
@@ -587,6 +565,5 @@ void Parallaction_ns::_c_HBOff(void *) {
 void Parallaction_ns::_c_HBOn(void *) {
 	_gfx->setHalfbriteMode(true);
 }
-
 
 } // namespace Parallaction

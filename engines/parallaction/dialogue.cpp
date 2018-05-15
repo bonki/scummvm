@@ -28,7 +28,6 @@
 #include "parallaction/parallaction.h"
 
 
-
 namespace Parallaction {
 
 #define MAX_PASSWORD_LENGTH			 7
@@ -49,41 +48,41 @@ struct BalloonPositions {
 };
 
 
-
-
 class DialogueManager {
 
-	Parallaction	*_vm;
-	Dialogue		*_dialogue;
+	Parallaction *_vm;
+	Dialogue     *_dialogue;
 
-	bool			isNpc;
-	GfxObj			*_questioner;
-	GfxObj			*_answerer;
-	int				_faceId;
+	bool    isNpc;
+	GfxObj  *_questioner;
+	GfxObj  *_answerer;
+	int      _faceId;
 
-	Question		*_q;
+	Question *_q;
 
-	int			_answerId;
+	int  _answerId;
 
-	int		_selection, _oldSelection;
+	int _selection, _oldSelection;
 
-	uint32			_mouseButtons;
+	uint32        _mouseButtons;
 	Common::Point	_mousePos;
 
 protected:
-	BalloonPositions	_ballonPos;
+	BalloonPositions _ballonPos;
+
 	struct VisibleAnswer {
-		Answer	*_a;
-		int		_index;		// index into Question::_answers[]
-		int		_balloon;
+		Answer *_a;
+		int     _index; // index into Question::_answers[]
+		int     _balloon;
 	} _visAnswers[5];
-	int			_numVisAnswers;
-	bool			_isKeyDown;
-	uint16			_downKey;
+
+	int    _numVisAnswers;
+	bool   _isKeyDown;
+	uint16 _downKey;
 
 protected:
-	Gfx				*_gfx;
-	BalloonManager  *_balloonMan;
+	Gfx            *_gfx;
+	BalloonManager *_balloonMan;
 
 public:
 	DialogueManager(Parallaction *vm, ZonePtr z);
@@ -96,7 +95,7 @@ public:
 	}
 	void run();
 
-	ZonePtr			_z;
+	ZonePtr      _z;
 	CommandList *_cmdList;
 
 protected:
@@ -212,7 +211,6 @@ bool DialogueManager::testAnswerFlags(Answer *a) {
 }
 
 void DialogueManager::displayAnswers() {
-
 	// create balloons
 	int id;
 	for (int i = 0; i < _numVisAnswers; ++i) {
@@ -250,7 +248,6 @@ int16 DialogueManager::selectAnswer1() {
 }
 
 int16 DialogueManager::selectAnswerN() {
-
 	_selection = _balloonMan->hitTestDialogueBalloon(_mousePos.x, _mousePos.y);
 
 	VisibleAnswer *oldAnswer = (_oldSelection == NO_ANSWER_SELECTED) ? NULL : &_visAnswers[_oldSelection];
@@ -293,7 +290,6 @@ void DialogueManager::runQuestion() {
 	}
 
 }
-
 
 void DialogueManager::nextAnswer() {
 	if (_q->_answers[0] == NULL) {
@@ -341,9 +337,7 @@ void DialogueManager::nextQuestion() {
 	}
 }
 
-
 void DialogueManager::run() {
-
 	// cache event data
 	_mouseButtons = _vm->_input->getLastButtonEvent();
 	_vm->_input->getCursorPos(_mousePos);
@@ -371,18 +365,15 @@ void DialogueManager::run() {
 
 	default:
 		error("unknown state in DialogueManager");
-
 	}
-
 }
-
 
 
 class DialogueManager_ns : public DialogueManager {
 protected:
 	Parallaction_ns *_vm;
-	bool			_passwordChanged;
-	bool			_askPassword;
+	bool _passwordChanged;
+	bool _askPassword;
 
 	bool checkPassword() {
 		return ((!scumm_stricmp(_vm->_char.getBaseName(), g_doughName) && _vm->_password.hasPrefix("1732461")) ||
@@ -405,7 +396,6 @@ protected:
 	}
 
 	int16 askPassword() {
-
 		if (_isKeyDown) {
 			accumPassword(_downKey);
 		}
