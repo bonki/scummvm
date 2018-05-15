@@ -192,11 +192,7 @@ int Input::updateGameInput() {
 
 	int event = kEvNone;
 
-	if (!isMouseEnabled() ||
-		(g_engineFlags & kEngineBlockInput) ||
-		(g_engineFlags & kEngineWalking) ||
-		(g_engineFlags & kEngineChangeLocation)) {
-
+	if (!_vm->canLoadOrSave()) {
 		debugC(3, kDebugInput, "updateGameInput: input flags (mouse: %i, block: %i, walking: %i, changeloc: %i)",
 			isMouseEnabled(),
 			(g_engineFlags & kEngineBlockInput) == 0,

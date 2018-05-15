@@ -574,4 +574,10 @@ void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	g_engineFlags |= kEngineWalking;
 }
 
+bool Parallaction_ns::canSaveGameStateCurrently() {
+	return \
+		canLoadOrSave() &&
+		scumm_stricmp(_location._name, "caveau") != 0;
+}
+
 }// namespace Parallaction

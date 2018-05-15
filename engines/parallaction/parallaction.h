@@ -275,6 +275,12 @@ public:
 	virtual void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
 
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &description);
+	virtual bool canLoadOrSave() const;
+	virtual bool canLoadGameStateCurrently();
+	virtual bool canSaveGameStateCurrently();
+
 	// info
 	int32			_screenWidth;
 	int32			_screenHeight;
@@ -422,6 +428,8 @@ public:
 	virtual bool processGameEvent(int event);
 
 	void	changeBackground(const char *background, const char *mask = 0, const char *path = 0);
+
+	bool canSaveGameStateCurrently();
 
 private:
 	bool				_inTestResult;

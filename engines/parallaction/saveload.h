@@ -37,8 +37,6 @@ protected:
 	Common::OutSaveFile *getOutSaveFile(uint slot);
 	int selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button);
 	int buildSaveFileList(Common::StringArray& l);
-	virtual void doLoadGame(uint16 slot) = 0;
-	virtual void doSaveGame(uint16 slot, const char* name) = 0;
 
 public:
 	SaveLoad(Common::SaveFileManager* saveFileMan, const char *prefix) : _saveFileMan(saveFileMan), _saveFilePrefix(prefix) { }
@@ -46,6 +44,9 @@ public:
 
 	virtual bool loadGame();
 	virtual bool saveGame();
+
+	virtual Common::Error loadGameState(int slot) = 0;
+	virtual Common::Error saveGameState(int slot, const Common::String &description) = 0;
 
 	virtual void getGamePartProgress(bool *complete, int size) = 0;
 	virtual void setPartComplete(const char *part) = 0;
@@ -58,13 +59,12 @@ class SaveLoad_ns : public SaveLoad {
 
 protected:
 	void renameOldSavefiles();
-	virtual void doLoadGame(uint16 slot);
-	virtual void doSaveGame(uint16 slot, const char* name);
 
 public:
 	SaveLoad_ns(Parallaction_ns *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "nippon"), _vm(vm) { }
 
-	virtual bool saveGame();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &description);
 
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);
@@ -72,11 +72,12 @@ public:
 
 class SaveLoad_br : public SaveLoad {
 //	Parallaction_br *_vm;
-	virtual void doLoadGame(uint16 slot);
-	virtual void doSaveGame(uint16 slot, const char* name);
 
 public:
 	SaveLoad_br(Parallaction_br *vm, Common::SaveFileManager *saveFileMan) : SaveLoad(saveFileMan, "bra") { }
+
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const Common::String &description);
 
 	virtual void getGamePartProgress(bool *complete, int size);
 	virtual void setPartComplete(const char *part);

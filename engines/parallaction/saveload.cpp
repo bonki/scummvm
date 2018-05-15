@@ -53,50 +53,40 @@ Common::String SaveLoad::genSaveFileName(uint slot) {
 
 Common::InSaveFile *SaveLoad::getInSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
-	return _saveFileMan->openForLoading(name);
+	return g_system->getSavefileManager()->openForLoading(name);
 }
 
 Common::OutSaveFile *SaveLoad::getOutSaveFile(uint slot) {
 	Common::String name = genSaveFileName(slot);
-	return _saveFileMan->openForSaving(name);
+	return g_system->getSavefileManager()->openForSaving(name);
 }
 
-void SaveLoad_ns::doLoadGame(uint16 slot) {
+Common::Error SaveLoad_ns::loadGameState(int slot) {
 	_vm->cleanupGame();
 
-	Common::InSaveFile *f = getInSaveFile(slot);
-	if (!f) return;
+	Common::InSaveFile *file = getInSaveFile(slot);
+	if (!file) {
+		return Common::kReadingFailed;
+	}
 
 	Common::String s, character, location;
 
 	// scrap the line with the savefile name
-	f->readLine();
+	file->readLine();
 
-	character = f->readLine();
-	location = f->readLine();
+	character = file->readLine();
+	location  = file->readLine();
 
-	s = f->readLine();
-	_vm->_location._startPosition.x = atoi(s.c_str());
-
-	s = f->readLine();
-	_vm->_location._startPosition.y = atoi(s.c_str());
-
-	s = f->readLine();
-	_vm->_score = atoi(s.c_str());
-
-	s = f->readLine();
-	g_globalFlags = atoi(s.c_str());
-
-	s = f->readLine();
-	_vm->_numLocations = atoi(s.c_str());
+	_vm->_location._startPosition.x = atoi(file->readLine().c_str());
+	_vm->_location._startPosition.y = atoi(file->readLine().c_str());
+	_vm->_score                     = atoi(file->readLine().c_str());
+	g_globalFlags                   = atoi(file->readLine().c_str());
+	_vm->_numLocations              = atoi(file->readLine().c_str());
 
 	uint16 _si;
 	for (_si = 0; _si < _vm->_numLocations; _si++) {
-		s = f->readLine();
-		Common::strlcpy(_vm->_locationNames[_si], s.c_str(), 32);
-
-		s = f->readLine();
-		_vm->_localFlags[_si] = atoi(s.c_str());
+		Common::strlcpy(_vm->_locationNames[_si], file->readLine().c_str(), 32);
+		_vm->_localFlags[_si] = atoi(file->readLine().c_str());
 	}
 
 	_vm->cleanInventory(false);
@@ -104,16 +94,11 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	uint32 value;
 
 	for (_si = 0; _si < 30; _si++) {
-		s = f->readLine();
-		value = atoi(s.c_str());
-
-		s = f->readLine();
-		name = atoi(s.c_str());
+		value = atoi(file->readLine().c_str());
+		name  = atoi(file->readLine().c_str());
 
 		_vm->addInventoryItem(name, value);
 	}
-
-	delete f;
 
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway
@@ -122,58 +107,57 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	char tmp[PATH_LEN];
 	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());
 	_vm->scheduleLocationSwitch(tmp);
+
+	delete file;
+	return Common::kNoError;
 }
 
-void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
-	Common::OutSaveFile *f = getOutSaveFile(slot);
-	if (f == 0) {
+Common::Error SaveLoad_ns::saveGameState(int slot, const Common::String &description) {
+	Common::OutSaveFile *file = getOutSaveFile(slot);
+	if (file == 0) {
 		Common::String buf = Common::String::format(_("Can't save game in slot %i\n\n"), slot);
 		GUI::MessageDialog dialog(buf);
 		dialog.runModal();
-		return;
+		return Common::kWritingFailed;;
 	}
 
 	char s[200];
 	memset(s, 0, sizeof(s));
 
-	if (!name || name[0] == '\0') {
-		sprintf(s, "default_%i", slot);
-	} else {
-		strncpy(s, name, 199);
-	}
-
-	f->writeString(s);
-	f->writeString("\n");
+	file->writeString(description);
+	file->writeString("\n");
 
 	sprintf(s, "%s\n", _vm->_char.getFullName());
-	f->writeString(s);
+	file->writeString(s);
 
 	sprintf(s, "%s\n", g_saveData1);
-	f->writeString(s);
+	file->writeString(s);
 	sprintf(s, "%d\n", _vm->_char._ani->getX());
-	f->writeString(s);
+	file->writeString(s);
 	sprintf(s, "%d\n", _vm->_char._ani->getY());
-	f->writeString(s);
+	file->writeString(s);
 	sprintf(s, "%d\n", _vm->_score);
-	f->writeString(s);
+	file->writeString(s);
 	sprintf(s, "%u\n", g_globalFlags);
-	f->writeString(s);
+	file->writeString(s);
 
 	sprintf(s, "%d\n", _vm->_numLocations);
-	f->writeString(s);
+	file->writeString(s);
 	for (uint16 _si = 0; _si < _vm->_numLocations; _si++) {
 		sprintf(s, "%s\n%u\n", _vm->_locationNames[_si], _vm->_localFlags[_si]);
-		f->writeString(s);
+		file->writeString(s);
 	}
 
 	const InventoryItem *item;
 	for (uint16 _si = 0; _si < 30; _si++) {
 		item = _vm->getInventoryItem(_si);
 		sprintf(s, "%u\n%d\n", item->_id, item->_index);
-		f->writeString(s);
+		file->writeString(s);
 	}
 
-	delete f;
+	delete file;
+
+	return Common::kNoError;
 }
 
 int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
@@ -186,17 +170,21 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 		selectedName = slc.getResultString();
 	}
 
+	if (selectedName.empty()) {
+		selectedName = slc.createDefaultSaveDescription(idx);
+	}
+
 	return idx;
 }
 
 bool SaveLoad::loadGame() {
 	Common::String null;
-	int _di = selectSaveFile(null, false, _("Load file"), _("Load"));
-	if (_di == -1) {
+	int slot = selectSaveFile(null, false, _("Load file"), _("Load"));
+	if (slot == -1) {
 		return false;
 	}
 
-	doLoadGame(_di);
+	loadGameState(slot);
 
 	GUI::TimedMessageDialog dialog(_("Loading game..."), 1500);
 	dialog.runModal();
@@ -211,22 +199,12 @@ bool SaveLoad::saveGame() {
 		return false;
 	}
 
-	doSaveGame(slot, saveName.c_str());
+	saveGameState(slot, saveName);
 
 	GUI::TimedMessageDialog dialog(_("Saving game..."), 1500);
 	dialog.runModal();
 
 	return true;
-}
-
-bool SaveLoad_ns::saveGame() {
-	// NOTE: shouldn't this check be done before, so that the
-	// user can't even select 'save'?
-	if (!scumm_stricmp(_vm->_location._name, "caveau")) {
-		return false;
-	}
-
-	return SaveLoad::saveGame();
 }
 
 void SaveLoad_ns::setPartComplete(const char *part) {
@@ -323,12 +301,14 @@ void SaveLoad_ns::renameOldSavefiles() {
 	dialog1.runModal();
 }
 
-void SaveLoad_br::doLoadGame(uint16 slot) {
+Common::Error SaveLoad_br::loadGameState(int slot) {
 	// TODO: implement loadgame
+	return Common::kNoError;
 }
 
-void SaveLoad_br::doSaveGame(uint16 slot, const char* name) {
+Common::Error SaveLoad_br::saveGameState(int slot, const Common::String &description) {
 	// TODO: implement savegame
+	return Common::kNoError;
 }
 
 void SaveLoad_br::getGamePartProgress(bool *complete, int size) {

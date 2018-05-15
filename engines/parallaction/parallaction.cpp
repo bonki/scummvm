@@ -987,4 +987,29 @@ void Parallaction::scheduleLocationSwitch(const char *location) {
 	g_engineFlags |= kEngineChangeLocation;
 }
 
+bool Parallaction::canLoadOrSave() const {
+	return
+		_input->isMouseEnabled() &&
+		!(g_engineFlags & kEngineBlockInput) &&
+		!(g_engineFlags & kEngineWalking) &&
+		!(g_engineFlags & kEngineChangeLocation)
+	;
+}
+
+bool Parallaction::canLoadGameStateCurrently() {
+	return canLoadOrSave();
+}
+
+bool Parallaction::canSaveGameStateCurrently() {
+	return canLoadOrSave();
+}
+
+Common::Error Parallaction::loadGameState(int slot) {
+	return _saveLoad->loadGameState(slot);
+}
+
+Common::Error Parallaction::saveGameState(int slot, const Common::String &description) {
+	return _saveLoad->saveGameState(slot, description);
+}
+
 } // End of namespace Parallaction

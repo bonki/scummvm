@@ -245,8 +245,14 @@ bool ParallactionMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL);
+	switch (f) {
+	case kSupportsRTL:
+	case kSupportsLoadingDuringRuntime:
+	case kSupportsSavingDuringRuntime:
+		return true;
+	default:
+		return false;
+	}
 }
 
 bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
