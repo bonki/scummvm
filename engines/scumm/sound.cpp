@@ -559,6 +559,16 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_mixer->stopID(id);
 		}
 
+		// WORKAROUND
+		// The voice sample at offset 0x76ccbca ("Hey you!") which is used when Indy gets caught
+		// on the German submarine seems to be broken in the game data and produces only noise.
+		// To work around this we reuse a similar (working) sample.
+		// Fixes Trac#10559
+		if (mode == 2 && (_vm->_game.id == GID_INDY4) && (_vm->_language == Common::EN_ANY) && offset == 0x76ccbca) {
+			offset = 0x6a3b232;
+			b      = 0x12;
+		}
+
 		if (b > 8) {
 			num = (b - 8) >> 1;
 		}
