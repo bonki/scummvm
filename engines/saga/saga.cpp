@@ -352,7 +352,7 @@ Common::Error SagaEngine::run() {
 	while (!shouldQuit()) {
 		_console->onFrame();
 
-		if (_render->getFlags() & RF_RENDERPAUSE) {
+		if (isPaused()) {
 			// Freeze time while paused
 			_previousTicks = _system->getMillis();
 		} else {
@@ -648,12 +648,7 @@ void SagaEngine::pauseEngineIntern(bool pause) {
 	if (!_render || !_music)
 		return;
 
-	bool engineIsPaused = (_render->getFlags() & RF_RENDERPAUSE);
-	if (engineIsPaused == pause)
-		return;
-
 	if (pause) {
-		_render->setFlag(RF_RENDERPAUSE);
 		if (_music->isPlaying() && !_music->hasDigitalMusic()) {
 			_music->pause();
 			_musicWasPlaying = true;
@@ -661,7 +656,6 @@ void SagaEngine::pauseEngineIntern(bool pause) {
 			_musicWasPlaying = false;
 		}
 	} else {
-		_render->clearFlag(RF_RENDERPAUSE);
 		if (_musicWasPlaying) {
 			_music->resume();
 		}

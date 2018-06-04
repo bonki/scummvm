@@ -116,8 +116,18 @@ int SagaEngine::processInput() {
 				break;
 			case Common::KEYCODE_PAUSE:
 			case Common::KEYCODE_z:
-				_render->toggleFlag(RF_RENDERPAUSE);
+				if (isPaused() || _interface->getMode() == kPanelMain) {
+					if (isPaused()) {
+						_interface->activate();
+						pauseEngine(false);
+					} else {
+						_interface->deactivate();
+						pauseEngine(true);
+					}
+					_render->toggleFlag(RF_RENDERPAUSE);
+				}
 				break;
+
 			default:
 				_interface->processAscii(event.kbd);
 				break;
