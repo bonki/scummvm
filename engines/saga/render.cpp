@@ -210,15 +210,15 @@ void Render::drawScene() {
 	_fullRefresh = true;
 }
 
-void Render::addDirtyRect(Common::Rect r) {
+void Render::addDirtyRect(Common::Rect rect) {
 	if (_fullRefresh)
 		return;
 
 	// Clip rectangle
-	r.clip(_backGroundSurface.w, _backGroundSurface.h);
+	rect.clip(_backGroundSurface.w, _backGroundSurface.h);
 
 	// If it is empty after clipping, we are done
-	if (r.isEmpty())
+	if (rect.isEmpty())
 		return;
 
 	// Check if the new rectangle is contained within another in the list
@@ -226,12 +226,12 @@ void Render::addDirtyRect(Common::Rect r) {
 	for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ) {
 		// If we find a rectangle which fully contains the new one,
 		// we can abort the search.
-		if (it->contains(r))
+		if (it->contains(rect))
 			return;
 
 		// Conversely, if we find rectangles which are contained in
 		// the new one, we can remove them
-		if (r.contains(*it))
+		if (rect.contains(*it))
 			it = _dirtyRects.erase(it);
 		else
 			++it;
@@ -239,7 +239,7 @@ void Render::addDirtyRect(Common::Rect r) {
 
 	// If we got here, we can safely add r to the list of dirty rects.
 	if (_vm->_interface->getFadeMode() != kFadeOut)
-		_dirtyRects.push_back(r);
+		_dirtyRects.push_back(rect);
 }
 
 void Render::restoreChangedRects() {
