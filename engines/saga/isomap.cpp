@@ -338,7 +338,6 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 	mu = absU - ru;
 	mv = absV - rv;
 
-	tileIndex = 0;
 	for (i = 0; i < _multiTable.size(); i++) {
 		multiTileEntryData = &_multiTable[i];
 
