@@ -70,21 +70,21 @@ void PDAMgr::execute(const Command &command) {
 		break;
 	case Command::kIncrementCountry:
 		_countryIndex = (_countryIndex + 1) % 6;
-		updateWheels(1);
+		updateWheels(true);
 		updateLocator();
 		break;
 	case Command::kDecrementCountry:
 		_countryIndex = (_countryIndex + 5) % 6;
-		updateWheels(1);
+		updateWheels(true);
 		updateLocator();
 		break;
 	case Command::kIncrementDomain:
 		_domainIndex = (_domainIndex + 1) % 8;
-		updateWheels(1);
+		updateWheels(true);
 		break;
 	case Command::kDecrementDomain:
 		_domainIndex = (_domainIndex + 7) % 8;
-		updateWheels(1);
+		updateWheels(true);
 		break;
 	case Command::kClose:
 		close();
