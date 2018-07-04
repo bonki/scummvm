@@ -155,7 +155,7 @@ protected:
 	Common::File _file;
 	int32 _fileSize;
 
-	bool load(SagaEngine *_vm, Resource *resource);
+	bool load(SagaEngine *vm, Resource *resource);
 	bool loadResV1(uint32 contextOffset, uint32 contextSize);
 
 	virtual bool loadMacMIDI() { return false; }
