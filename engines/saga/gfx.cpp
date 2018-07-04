@@ -239,14 +239,14 @@ void Gfx::setPaletteColor(int n, int r, int g, int b) {
 		_system->getPaletteManager()->setPalette(_currentPal + n * 3, n, 1);
 }
 
-void Gfx::getCurrentPal(PalEntry *src_pal) {
+void Gfx::getCurrentPal(PalEntry *srcPal) {
 	int i;
 	byte *ppal;
 
 	for (i = 0, ppal = _currentPal; i < PAL_ENTRIES; i++, ppal += 3) {
-		src_pal[i].red = ppal[0];
-		src_pal[i].green = ppal[1];
-		src_pal[i].blue = ppal[2];
+		srcPal[i].red = ppal[0];
+		srcPal[i].green = ppal[1];
+		srcPal[i].blue = ppal[2];
 	}
 }
 
