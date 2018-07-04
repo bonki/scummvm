@@ -86,7 +86,7 @@ int Scene::IHNMStartProc() {
 	firstScene.loadFlag = kLoadBySceneNumber;
 	firstScene.sceneDescriptor = -1;
 	firstScene.sceneSkipTarget = false;
-	firstScene.sceneProc = NULL;
+	firstScene.sceneProc = nullptr;
 	firstScene.transitionType = kTransitionFade;
 	firstScene.actorsEntrance = 0;
 	firstScene.chapter = -1;
@@ -121,7 +121,7 @@ void Scene::IHNMLoadCutaways() {
 	ByteArray resourceData;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (resourceContext == NULL) {
+	if (resourceContext == nullptr) {
 		error("Scene::IHNMStartProc() resource context not found");
 	}
 

@@ -275,7 +275,7 @@ void Script::sfShowIHNMDemoHelpBg(SCRIPTFUNC_PARAMS) {
 	_ihnmDemoCurrentY = 0;
 	_vm->_scene->_textList.clear();
 	_vm->_interface->setMode(kPanelConverse);
-	_vm->_scene->showPsychicProfile(NULL);
+	_vm->_scene->showPsychicProfile(nullptr);
 }
 
 void Script::sfAddIHNMDemoHelpTextLine(SCRIPTFUNC_PARAMS) {

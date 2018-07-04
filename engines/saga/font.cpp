@@ -41,8 +41,8 @@ Font::Font(SagaEngine *vm) : _vm(vm) {
 	_fonts.resize(_vm->getFontsCount());
 	for (i = 0; i < _vm->getFontsCount(); i++) {
 #ifdef __DS__
-		_fonts[i].outline.font = NULL;
-		_fonts[i].normal.font = NULL;
+		_fonts[i].outline.font = nullptr;
+		_fonts[i].normal.font = nullptr;
 #endif
 		loadFont(&_fonts[i],	_vm->getFontDescription(i)->fontResourceId);
 	}
@@ -76,7 +76,7 @@ void Font::loadFont(FontData *font, uint32 fontResourceId) {
 	debug(1, "Font::loadFont(): Reading fontResourceId %d...", fontResourceId);
 
 	fontContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (fontContext == NULL) {
+	if (fontContext == nullptr) {
 		error("Font::Font() resource context not found");
 	}
 
@@ -499,7 +499,7 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 
 	for (;;) {
 		foundPointer = strchr(searchPointer, ' ');
-		if (foundPointer == NULL) {
+		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
 		} else {
@@ -517,8 +517,8 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 			}
 			// Wrap what we've got and restart
 			textPoint.y += h + TEXT_LINESPACING;
-			if (foundPointer == NULL) {
-				// Since word hit NULL but fit, we are done
+			if (foundPointer == nullptr) {
+				// Since word hit nullptr but fit, we are done
 				return textPoint.y + h;
 			}
 			w_total = 0;
@@ -530,8 +530,8 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 			w_total += w;
 			len_total += len;
 			wc++;
-			if (foundPointer == NULL) {
-				// Since word hit NULL but fit, we are done
+			if (foundPointer == nullptr) {
+				// Since word hit nullptr but fit, we are done
 				return textPoint.y + h;
 			}
 			searchPointer = measurePointer + 1;
@@ -585,7 +585,7 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 
 	for (;;) {
 		foundPointer = strchr(searchPointer, ' ');
-		if (foundPointer == NULL) {
+		if (foundPointer == nullptr) {
 			// Ran to the end of the buffer
 			len = endPointer - measurePointer;
 		} else {
@@ -636,8 +636,8 @@ void Font::textDrawRect(FontId fontId, const char *text, const Common::Rect &rec
 			w_total += w;
 			len_total += len;
 			wc++;
-			if (foundPointer == NULL) {
-				// Since word hit NULL but fit, we are done
+			if (foundPointer == nullptr) {
+				// Since word hit nullptr but fit, we are done
 				textPoint2.x = textPoint.x - (w_total / 2);
 				textPoint2.y = textPoint.y;
 				draw(fontId, startPointer, len_total, textPoint2, color,

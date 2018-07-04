@@ -176,14 +176,14 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	stream.read(magic, 4);
 	if (memcmp(magic, "ajkg", 4) != 0) {
 		warning("loadShortenFromStream: No 'ajkg' header");
-		return NULL;
+		return nullptr;
 	}
 
 	version = stream.readByte();
 
 	if (version > MAX_SUPPORTED_VERSION) {
 		warning("loadShortenFromStream: Can't decode version %d, maximum supported version is %d", version, MAX_SUPPORTED_VERSION);
-		return NULL;
+		return nullptr;
 	}
 
 	mean = (version < 2) ? 0 : 4;
@@ -220,12 +220,12 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 			// TODO: Perhaps implement this if we find WAV Shorten encoded files
 			warning("loadShortenFromStream: Type WAV is not supported");
 			delete gReader;
-			return NULL;
+			return nullptr;
 		case kTypeAIFF:
 			// TODO: Perhaps implement this if we find AIFF Shorten encoded files
 			warning("loadShortenFromStream: Type AIFF is not supported");
 			delete gReader;
-			return NULL;
+			return nullptr;
 		case kTypeAU1:
 		case kTypeAU2:
 		case kTypeAU3:
@@ -237,7 +237,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 		default:
 			warning("loadShortenFromStream: Type %d is not supported", type);
 			delete gReader;
-			return NULL;
+			return nullptr;
 	}
 
 	// Get channels
@@ -245,7 +245,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 	if (channels != 1 && channels != 2) {
 		warning("loadShortenFromStream: Only 1 or 2 channels are supported, stream contains %d channels", channels);
 		delete gReader;
-		return NULL;
+		return nullptr;
 	}
 
 	// Get block size
@@ -387,7 +387,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 							warning("Safeguard: maxLPC < lpcNum (should never happen)");
 							maxLPC = lpcNum;
 							int32 *tmp = (int32 *) realloc(lpc, maxLPC * 4);
-							if ((tmp != NULL) || (maxLPC == 0)) {
+							if ((tmp != nullptr) || (maxLPC == 0)) {
 								lpc = tmp;
 							} else {
 								error("loadShortenFromStream(): Error while reallocating memory");
@@ -458,7 +458,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 					prevSize = size;
 					size += (blockSize * dataSize);
 					byte *tmp = (byte *) realloc(unpackedBuffer, size);
-					if ((tmp != NULL) || (size == 0)) {
+					if ((tmp != nullptr) || (size == 0)) {
 						unpackedBuffer = tmp;
 					} else {
 						error("loadShortenFromStream(): Error while reallocating memory");
@@ -497,7 +497,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 				prevSize = size;
 				size += vLen;
 				byte *tmp = (byte *) realloc(unpackedBuffer, size);
-				if ((tmp != NULL) || (size == 0)) {
+				if ((tmp != nullptr) || (size == 0)) {
 					unpackedBuffer = tmp;
 				} else {
 					error("loadShortenFromStream(): Error while reallocating memory");
@@ -527,7 +527,7 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 					free(unpackedBuffer);
 
 				delete gReader;
-				return NULL;
+				return nullptr;
 				break;
 		}
 	}

@@ -148,7 +148,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 
 	// Load scene module resource context
 	_sceneContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (_sceneContext == NULL) {
+	if (_sceneContext == nullptr) {
 		error("Scene::Scene() scene context not found");
 	}
 
@@ -208,7 +208,7 @@ Scene::Scene(SagaEngine *vm) : _vm(vm) {
 	_sceneResourceId = 0;
 	_inGame = false;
 	_sceneDescription.reset();
-	_sceneProc = NULL;
+	_sceneProc = nullptr;
 	_objectMap = new ObjectMap(_vm);
 	_actionMap = new ObjectMap(_vm);
 }
@@ -495,7 +495,7 @@ void Scene::changeScene(int16 sceneNumber, int actorsEntrance, SceneTransitionTy
 	sceneParams.loadFlag = kLoadBySceneNumber;
 	sceneParams.sceneDescriptor = sceneNumber;
 	sceneParams.transitionType = transitionType;
-	sceneParams.sceneProc = NULL;
+	sceneParams.sceneProc = nullptr;
 	sceneParams.sceneSkipTarget = false;
 	sceneParams.chapter = chapter;
 
@@ -698,7 +698,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 
 	_sceneLoaded = true;
 
-	eventColumns = NULL;
+	eventColumns = nullptr;
 
 	if (loadSceneParams.transitionType == kTransitionFade) {
 
@@ -779,7 +779,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		_vm->_events->chain(eventColumns, event);
 	}
 
-	if (loadSceneParams.sceneProc == NULL) {
+	if (loadSceneParams.sceneProc == nullptr) {
 		if (!_inGame && _vm->getGameId() == GID_ITE) {
 			_inGame = true;
 			_vm->_interface->setMode(kPanelMain);
@@ -923,7 +923,7 @@ void Scene::loadSceneResourceList(uint32 resourceId, SceneResourceDataArray &res
 void Scene::processSceneResources(SceneResourceDataArray &resourceList) {
 	ByteArray resourceData;
 	const byte *palPointer;
-	SAGAResourceTypes *types = 0;
+	SAGAResourceTypes *types = nullptr;
 	int typesCount = 0;
 	SAGAResourceTypes resType;
 
@@ -1119,7 +1119,7 @@ void Scene::endScene() {
 
 	debug(3, "Ending scene...");
 
-	if (_sceneProc != NULL) {
+	if (_sceneProc != nullptr) {
 		_sceneProc(SCENE_END, this);
 	}
 
@@ -1402,7 +1402,7 @@ void Scene::showPsychicProfile(const char *text) {
 
 	_vm->_scene->_textList.clear();
 
-	if (text != NULL) {
+	if (text != nullptr) {
 		textHeight = _vm->_font->getHeight(kKnownFontVerb, text, 226, kFontCentered);
 
 		textEntry.knownColor = kKnownColorBlack;

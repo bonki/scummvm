@@ -86,7 +86,7 @@ static const PlainGameDescriptor sagaGames[] = {
 	{"ihnm", "I Have No Mouth and I Must Scream"},
 	{"dino", "Dinotopia"},
 	{"fta2", "Faery Tale Adventure II: Halls of the Dead"},
-	{0, 0}
+	{nullptr, nullptr}
 };
 
 static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
@@ -94,7 +94,7 @@ static const Engines::ObsoleteGameID obsoleteGameIDsTable[] = {
 	{"ihnm", "saga", Common::kPlatformUnknown},
 	{"dino", "saga", Common::kPlatformUnknown},
 	{"fta2", "saga", Common::kPlatformUnknown},
-	{0, 0, Common::kPlatformUnknown}
+	{nullptr, nullptr, Common::kPlatformUnknown}
 };
 
 #include "saga/detection_tables.h"
@@ -173,7 +173,7 @@ bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);
 	}
-	return gd != 0;
+	return gd != nullptr;
 }
 
 SaveStateList SagaMetaEngine::listSaves(const char *target) const {

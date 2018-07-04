@@ -164,7 +164,7 @@ void MusicDriver::resume() {
 
 Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_currentVolume = 0;
-	_currentMusicBuffer = NULL;
+	_currentMusicBuffer = nullptr;
 	_player = new MusicDriver();
 
 	_digitalMusicContext = _vm->_resource->getContext(GAME_DIGITALMUSICFILE);
@@ -276,7 +276,7 @@ bool Music::isPlaying() {
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
-	Audio::SeekableAudioStream *audioStream = NULL;
+	Audio::SeekableAudioStream *audioStream = nullptr;
 	uint32 loopStart = 0;
 
 	debug(2, "Music::play %d, %d", resourceId, flags);
@@ -311,7 +311,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	char trackName[2][16];
 	sprintf(trackName[0], "track%d", realTrackNumber);
 	sprintf(trackName[1], "track%02d", realTrackNumber);
-	Audio::SeekableAudioStream *stream = 0;
+	Audio::SeekableAudioStream *stream = nullptr;
 	for (int i = 0; i < 2; ++i) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
@@ -324,7 +324,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 
 	if (_vm->getGameId() == GID_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
-			if (_digitalMusicContext != NULL) {
+			if (_digitalMusicContext != nullptr) {
 				loopStart = 0;
 				// Fix ITE sunstatm/sunspot score
 				if (resourceId == MUSIC_SUNSPOT)

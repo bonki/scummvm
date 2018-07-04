@@ -75,24 +75,24 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_musicWasPlaying = false;
 	_hasITESceneSubstitutes = false;
 
-	_sndRes = NULL;
-	_sound = NULL;
-	_music = NULL;
-	_anim = NULL;
-	_render = NULL;
-	_isoMap = NULL;
-	_gfx = NULL;
-	_script = NULL;
-	_actor = NULL;
-	_font = NULL;
-	_sprite = NULL;
-	_scene = NULL;
-	_interface = NULL;
-	_console = NULL;
-	_events = NULL;
-	_palanim = NULL;
-	_puzzle = NULL;
-	_resource = NULL;
+	_sndRes = nullptr;
+	_sound = nullptr;
+	_music = nullptr;
+	_anim = nullptr;
+	_render = nullptr;
+	_isoMap = nullptr;
+	_gfx = nullptr;
+	_script = nullptr;
+	_actor = nullptr;
+	_font = nullptr;
+	_sprite = nullptr;
+	_scene = nullptr;
+	_interface = nullptr;
+	_console = nullptr;
+	_events = nullptr;
+	_palanim = nullptr;
+	_puzzle = nullptr;
+	_resource = nullptr;
 
 	_previousTicks = 0;
 
@@ -137,7 +137,7 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 }
 
 SagaEngine::~SagaEngine() {
-	if (_scene != NULL) {
+	if (_scene != nullptr) {
 		if (_scene->isSceneLoaded()) {
 			_scene->endScene();
 		}
@@ -145,63 +145,63 @@ SagaEngine::~SagaEngine() {
 
 	if (getGameId() == GID_ITE) {
 		delete _isoMap;
-		_isoMap = NULL;
+		_isoMap = nullptr;
 
 		delete _puzzle;
-		_puzzle = NULL;
+		_puzzle = nullptr;
 	}
 
 	delete _sndRes;
-	_sndRes = NULL;
+	_sndRes = nullptr;
 
 	delete _events;
-	_events = NULL;
+	_events = nullptr;
 
 	if (!isSaga2()) {
 		delete _font;
-		_font = NULL;
+		_font = nullptr;
 
 		delete _sprite;
-		_sprite = NULL;
+		_sprite = nullptr;
 	}
 
 	delete _anim;
-	_anim = NULL;
+	_anim = nullptr;
 
 	delete _script;
-	_script = NULL;
+	_script = nullptr;
 
 	if (!isSaga2()) {
 		delete _interface;
-		_interface = NULL;
+		_interface = nullptr;
 	}
 
 	delete _actor;
-	_actor = NULL;
+	_actor = nullptr;
 
 	delete _palanim;
-	_palanim = NULL;
+	_palanim = nullptr;
 
 	delete _scene;
-	_scene = NULL;
+	_scene = nullptr;
 
 	delete _render;
-	_render = NULL;
+	_render = nullptr;
 
 	delete _music;
-	_music = NULL;
+	_music = nullptr;
 
 	delete _sound;
-	_sound = NULL;
+	_sound = nullptr;
 
 	delete _gfx;
-	_gfx = NULL;
+	_gfx = nullptr;
 
 	delete _console;
-	_console = NULL;
+	_console = nullptr;
 
 	delete _resource;
-	_resource = NULL;
+	_resource = nullptr;
 }
 
 Common::Error SagaEngine::run() {
@@ -480,13 +480,13 @@ const char *SagaEngine::getObjectName(uint16 objectId) const {
 	case kGameObjectHitZone:
 		hitZone = _scene->_objectMap->getHitZone(objectIdToIndex(objectId));
 
-		if (hitZone == NULL)
+		if (hitZone == nullptr)
 			return "";
 
 		return _scene->_sceneStrings.getString(hitZone->getNameIndex());
 	}
 	warning("SagaEngine::getObjectName name not found for 0x%X", objectId);
-	return NULL;
+	return nullptr;
 }
 
 const char *SagaEngine::getTextString(int textStringId) {
@@ -522,7 +522,7 @@ const char *SagaEngine::getTextString(int textStringId) {
 }
 
 void SagaEngine::getExcuseInfo(int verb, const char *&textString, int &soundResourceId) {
-	textString = NULL;
+	textString = nullptr;
 
 	if (verb == _script->getVerbType(kVerbOpen)) {
 		textString = getTextString(kTextNoPlaceToOpen);

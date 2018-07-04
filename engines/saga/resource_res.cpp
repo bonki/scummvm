@@ -50,12 +50,12 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	uint i;
 
 	resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (resourceContext == NULL) {
+	if (resourceContext == nullptr) {
 		error("Resource::loadGlobalResources() resource context not found");
 	}
 
 	soundContext = _vm->_resource->getContext(GAME_SOUNDFILE);
-	if (soundContext == NULL) {
+	if (soundContext == nullptr) {
 		error("Resource::loadGlobalResources() sound context not found");
 	}
 
@@ -210,7 +210,7 @@ void ResourceContext_RES::processPatches(Resource *resource, const GamePatchDesc
 	if (_fileType & GAME_PATCHFILE) {
 		subjectResourceType = ~GAME_PATCHFILE & _fileType;
 		subjectContext = resource->getContext((GameFileTypes)subjectResourceType);
-		if (subjectContext == NULL) {
+		if (subjectContext == nullptr) {
 			error("ResourceContext::load() Subject context not found");
 		}
 		ByteArray tableBuffer;

@@ -167,7 +167,7 @@ void Gfx::initPalette() {
 		return;
 
 	ResourceContext *resourceContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
-	if (resourceContext == NULL) {
+	if (resourceContext == nullptr) {
 		error("Resource::loadGlobalResources() resource context not found");
 	}
 
