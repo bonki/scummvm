@@ -35,6 +35,12 @@
 	#define GCC_ATLEAST(major, minor) 0
 #endif
 
+#ifdef __clang__
+	#define CLANG_ATLEAST(major, minor) (__clang_major__ > (major) || (__clang_major__ == (major) && __clang_minor__ >= (minor)))
+#else
+	#define CLANG_ATLEAST(major, minor) 0
+#endif
+
 #if defined(_WIN32_WCE) && _WIN32_WCE < 300
 	#define NONSTANDARD_PORT
 #endif
@@ -343,7 +349,6 @@
 	#define memcpy(dst, src, size)   psp_memcpy(dst, src, size)
 
 #endif
-
 
 //
 // Fallbacks / default values for various special macros
